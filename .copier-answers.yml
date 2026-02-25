@@ -1,0 +1,18 @@
+# Changes here will be overwritten by Copier
+_commit: 5.0.2
+_src_path: https://github.com/DiamondLightSource/python-copier-template.git
+author_email: l.haddad@diamond.ac.uk
+author_name: Lucy Haddad
+component_lifecycle: experimental
+component_owner: group:default/spectroscopy
+component_type: library
+description: A python package for processing and analysis of X-ray spectroscopy data
+distribution_name: xas-toolbox
+docker: false
+docs_type: README
+git_platform: github.com
+github_org: DiamondLightSource
+package_name: xas_toolbox
+pypi: false
+repo_name: xas-toolbox
+type_checker: mypy
