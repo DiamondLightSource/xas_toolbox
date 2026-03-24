@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: xas-toolbox
+  title: xas-toolbox
+  description: A python package for processing and analysis of X-ray spectroscopy data
+spec:
+  type: library
+  lifecycle: experimental
+  owner: group:default/spectroscopy
