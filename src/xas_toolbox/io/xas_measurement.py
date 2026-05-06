@@ -13,24 +13,6 @@ from xas_toolbox.io.measurement_types import (TransMeasurement, FluorMeasurement
 import numpy as np
 import logging; logger = logging.getLogger(__name__)
 
-# for use in routines that act on arbitrary "mu" array.
-_muvals = {"ref": "refData", "fluor":"fluorData", "trans":"transData"}
-
-
-
-### example for old generated data:
-# def _get_fn(fname, var):
-#     if var == "mutrans":
-#         var = "mu"
-#     with h5py.File(fname) as f:
-#         if var in f["processed/mixedSpectrum"].keys():
-#             out = f[f"processed/mixedSpectrum/{var}"][...]
-#         else: out = None
-#     return out
-
-# path = "Fe_mixture.nxs"
-# mix = XasMeasurement(partial(_get_fn, path))
-
 
 class XasMeasurement:
     """
