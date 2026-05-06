@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import PchipInterpolator, interp1d
-from filter import _remove_negative_gradient
+from .filter import _remove_negative_gradient
 
 def interpolate_data(x:np.ndarray, y:np.ndarray, xtarget:np.ndarray,
                    method:str="Pchip")->np.ndarray:
