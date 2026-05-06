@@ -9,16 +9,80 @@ from collections.abc import Callable
 from typing import Any, Union, Literal
 from xas_toolbox.utils.scan_data import ScanData, ScanMeta, ElementMeta
 from xas_toolbox.io.measurement_types import (TransMeasurement, FluorMeasurement, RefMeasurement, McaMeasurement,
-                                 XasMeta, CommonMeasurement)
+                                 XasMeta, AuxMeasurement)
 import numpy as np
 import logging; logger = logging.getLogger(__name__)
 
 # for use in routines that act on arbitrary "mu" array.
 _muvals = {"ref": "refData", "fluor":"fluorData", "trans":"transData"}
 
+
+
+### example for old generated data:
+# def _get_fn(fname, var):
+#     if var == "mutrans":
+#         var = "mu"
+#     with h5py.File(fname) as f:
+#         if var in f["processed/mixedSpectrum"].keys():
+#             out = f[f"processed/mixedSpectrum/{var}"][...]
+#         else: out = None
+#     return out
+
+# path = "Fe_mixture.nxs"
+# mix = XasMeasurement(partial(_get_fn, path))
+
+
 class XasMeasurement:
+    """
+    Class for Xas-Measurement data, these could be a single scan, stacked scans with common
+    energy axis or a collection of scans with given absorption values and energies.
+
+    Properties:
+        mu (np.ndarray): Principal recorded value for absorption.
+        energy (np.ndarray): Energy values.
+
+    Attributes:
+        mode (Literal["fluorescence", "transmission"]): What measurement mode the scan(s) are in.
+        meta (XasMeta): Metadata, could contain absorbing edge, atom and scan start + end time.
+        auxData (AuxMeasurement): Collection of measurements with `energy`, `i0` and any auxilliary
+                                    measurements (like time, temperature).
+        transData (TransMeasurement|None): Collection of measurements associated with transmission-mode data
+                                            i.e. `itrans`, `mutrans`.
+        fluorData (FluorMeasurement|None): Collection of measurements associated with fluorescence-mode data
+                                            i.e. `ifluor`, `mufluor`.
+        refData (RefMeasurement|None): Collection of reference data measurements (`murefer`, `irefer`).
+        mcaData (McaMeasurement|None) Collection of measurements related to MCA (`MCAs`, `dtc_factors`, ect).
+    """
     def __init__(self, get_value:Callable[[Union[ScanData, ScanMeta, ElementMeta, str]], Any],
                  mode:Literal["fluorescence", "transmission"]=None):
+        
+        """
+        Create an `XasMeasurement` object.
+        
+        Arguments:
+            get_value (Callable[[Union[ScanData, ScanMeta, ElementMeta, str]], Any]): Function to use
+                                when scan data is requested.
+            mode (Literal["fluorescence", "transmission"], Optional): Mode the scan is in (if not set this
+                                will be found automatically).
+
+        Example:
+            - for a .nxs file which has energy and mu inside an internal path: "data/xy"
+            ```
+            import h5py; from functools import partial
+            from xas_toolbox.io import XasMeasurement
+
+            def get_fn(filename, var):
+                if var == "mutrans": var = "mu" #forcing a "mode" assigned to the data.
+                with h5py.File(filename) as f:
+                if var in f["data/xy"].keys():
+                    out = f[f"data/xy/{var}"][...]
+                else: out = None
+                return out
+
+            path = "a_path.nxs"
+            data = XasMeasurement(partial(get_fn, path))
+            ```
+        """
 
         self._mu = None; self._energy = None
 
@@ -73,7 +137,7 @@ class XasMeasurement:
         """
         Determine what the principal values to go in `self.energy, self.mu` are.
         """
-        self.auxData = CommonMeasurement(get_value)
+        self.auxData = AuxMeasurement(get_value)
         self.transData = TransMeasurement(get_value)
         self.fluorData = FluorMeasurement(get_value)
         self.refData = RefMeasurement(get_value)

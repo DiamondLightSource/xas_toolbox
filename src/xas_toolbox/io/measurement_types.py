@@ -5,7 +5,7 @@ from typing import Callable, Any, Union
 from xas_toolbox.utils.scan_data import ScanData, ScanMeta, ElementMeta
 
 
-class CommonMeasurement():
+class AuxMeasurement():
     """
     Class for acquisition-mode agnostic scan data. <br>
     In `scan_data_types` I have set these to have `mode=None`.<br>
