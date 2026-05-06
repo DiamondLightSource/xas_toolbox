@@ -64,6 +64,9 @@ target/
 .venv*
 venv*
 
+# other names to be ignored
+old*
+
 # further build artifacts
 lockfiles/
 
