@@ -1,4 +1,4 @@
-from ..filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader, DatReader
+from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader, AsciiReader
 from pathlib import Path
 from xas_toolbox.utils.scan_data import ScanData
 from typing import Union, Callable, Any
@@ -44,7 +44,7 @@ def _load_nxs(path:Path)->tuple[Callable[[ScanData], Any],
     return get_data_fn, reader
 
 def _load_misc(path:Path)-> tuple[Callable[[ScanData], Any],
-                                       Union[DatReader, XdiReader]]:
+                                       Union[AsciiReader, XdiReader]]:
     """
     Return correct data store object and getter function for
     xdi/dat files.
@@ -58,7 +58,7 @@ def _load_misc(path:Path)-> tuple[Callable[[ScanData], Any],
             reader (DatReader | XdiReader): File path/data storage object.
     """
     if path.suffix == ".dat":
-        reader = DatReader(path)
+        reader = AsciiReader(path)
     elif path.suffix == ".xdi":
         reader = XdiReader(path)
     get_data_fn = reader.get_value

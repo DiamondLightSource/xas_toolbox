@@ -1,5 +1,5 @@
 from .single_file import _find_instrument
-from ..filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader, DatReader
+from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader, AsciiReader
 from xas_toolbox.utils.scan_data import ScanData, ScanMeta, ElementMeta
 import logging
 from pathlib import Path
@@ -46,7 +46,7 @@ class MultipleFileReader:
                     logger.warning(f"{path} skipped: {instrument} not supported.")
                     continue
 
-            elif path.suffix == ".dat": self.readers[f"{path}"] = DatReader(path)
+            elif path.suffix == ".dat": self.readers[f"{path}"] = AsciiReader(path)
             elif path.suffix == ".xdi": self.readers[f"{path}"] = XdiReader(path)
             else: logger.warning(f"{path} skipped- filetype not implemented.")
         if self.readers == {}:

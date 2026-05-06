@@ -1,4 +1,4 @@
-from ..xas_measurement import XasMeasurement
+from xas_toolbox.io.xas_measurement import XasMeasurement
 from .single_file import _load_misc, _load_nxs
 from .multi_file import MultipleFileReader
 from pathlib import Path
