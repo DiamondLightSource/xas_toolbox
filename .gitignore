@@ -66,6 +66,7 @@ venv*
 
 # other names to be ignored
 old*
+tst*
 
 # further build artifacts
 lockfiles/
