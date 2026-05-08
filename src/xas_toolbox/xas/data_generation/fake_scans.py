@@ -6,6 +6,7 @@ from xraydb import f2_chantler
 from xraydb.xray import xray_edge
 from xraylib import AtomicNumberToSymbol, CompoundParser
 
+from xas_toolbox.io import XasMeasurement
 from xas_toolbox.xas.edges import find_edges
 
 from .xafs_signal import make_signal
@@ -210,3 +211,39 @@ def get_fake_xas(
     if nscans == 1:
         xafs = xafs[0]
     return energy, xafs
+
+
+## to XasMeasurement:
+def make_fake_spectrum(
+    formula: str | list[str],
+    absorber: str | list[str] = None,
+    edge: str | list[str] = None,
+    energy_range: tuple[float, float] | None = None,
+    npoints: int = 1000,
+    pre: int = 200,
+    post: int = 800,
+    exafs: bool = True,
+    nscans: int = 10,
+) -> XasMeasurement:
+    energy, xafs = get_fake_xas(
+        formula,
+        absorber=absorber,
+        edge=edge,
+        energy_range=energy_range,
+        npoints=npoints,
+        pre=pre,
+        post=post,
+        exafs=exafs,
+        nscans=nscans,
+    )
+
+    def _get_fn(valname: str):
+        if valname == "energy":
+            return energy
+        if valname == "mu" or valname == "mutrans":
+            return xafs
+
+    out = XasMeasurement(get_value=_get_fn, mode="transmission")
+    out.energy = energy
+    out.mu = xafs
+    return out
