@@ -2,15 +2,16 @@
 Utils for classfying different scan data types.
 """
 
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
 from typing import Literal
+
 
 @dataclass
 class ScanParams:
     """
     Dataclass for what type of scan mode is used for parameters within
-    an XAS-file. 
+    an XAS-file.
 
     Attributes:
         valname (str): Name of the data being read in (e.g. mutrans).
@@ -18,8 +19,10 @@ class ScanParams:
                       What data acquisition mode the value relates to (set to `None` if
                       not known).
     """
+
     valname: str
     mode: Literal["transParams", "fluorParams", "referParams", "mcaParams"]
+
 
 @dataclass
 class MetaParams:
@@ -31,8 +34,10 @@ class MetaParams:
         mode (Literal["scanMeta", "elementMeta"] | None): What
                      type of metadata the value corresponds to.
     """
+
     valname: str
     mode: Literal["scanMeta", "elementMeta", None]
+
 
 class ScanData(ScanParams, Enum):
     """
@@ -45,9 +50,10 @@ class ScanData(ScanParams, Enum):
         `mutrans, mufluor, murefer,`\n
         `dtc_factors, raw_scaler_in_window, mcas`
     """
-    energy = "energy", None # "monoParams"?
-    angle = "angle", None # "monoParams"?
-    i0 = "i0", None # "???"?
+
+    energy = "energy", None  # "monoParams"?
+    angle = "angle", None  # "monoParams"?
+    i0 = "i0", None  # "???"?
     itrans = "itrans", "transParams"
     ifluor = "ifluor", "fluorParams"
     irefer = "irefer", "referParams"
@@ -58,6 +64,7 @@ class ScanData(ScanParams, Enum):
     raw_scaler_in_window = "raw_scaler_in_window", "mcaParams"
     mcas = "mcas", "mcaParams"
 
+
 class ScanMeta(MetaParams, Enum):
     """
     Class to capture scan metadata from XAS measurements.
@@ -65,10 +72,12 @@ class ScanMeta(MetaParams, Enum):
     Members:
         `start_time, end_time, repetition_files`
     """
+
     start_time = "start_time", "scanMeta"
     end_time = "end_time", "scanMeta"
     repetition_files = "repetition_files", "scanMeta"
     path = "path", "scanMeta"
+
 
 class ElementMeta(MetaParams, Enum):
     """
@@ -79,6 +88,7 @@ class ElementMeta(MetaParams, Enum):
         `symbol, edge,`\n
         `ref_symbol, ref_edge`
     """
+
     symbol = "symbol", "elementMeta"
     edge = "edge", "elementMeta"
     ref_symbol = "ref_symbol", "elementMeta"
