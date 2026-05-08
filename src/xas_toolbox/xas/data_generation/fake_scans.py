@@ -207,5 +207,6 @@ def get_fake_xas(
     pre_edges = np.append(pre_edges, npoints - 1)
 
     xafs = make_signal(energy, xafs, e0s, pre_edges)
-
+    if nscans == 1:
+        xafs = xafs[0]
     return energy, xafs
