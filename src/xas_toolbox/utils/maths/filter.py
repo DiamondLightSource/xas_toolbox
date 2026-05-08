@@ -60,8 +60,10 @@ def unit_pos_matrix(matrix: np.ndarray) -> np.ndarray:
         - If used for mixing profile assumed shape is
         timesteps/nscans * number components.
     """
-    if np.min(matrix) > 0:
+    if np.min(matrix) < 0:
         matrix += np.abs(np.min(matrix))
-    matrix = np.divide(matrix.T, np.linalg.norm(matrix, ord=1, axis=1)).T
+
+    np.divide(matrix.T, np.linalg.norm(matrix, ord=1, axis=1), out=matrix.T)
+    np.transpose(matrix)
 
     return matrix
