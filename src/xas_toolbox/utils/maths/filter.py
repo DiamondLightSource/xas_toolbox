@@ -45,41 +45,23 @@ def resize_with_replacement(
     return out
 
 
-def make_positive_matrix(values: np.ndarray | list) -> np.ndarray:
+def unit_pos_matrix(matrix: np.ndarray) -> np.ndarray:
     """
-    Shift all values in a matrix such that all values are positive.
-    Normalise the matrix over it's 0th axis to ensure all values
-    at each point values[i,:] sum to 1.
+    Shift all values in a matrix so that the minimum value (if negative)
+    becomes 0. Along axis 1 all elements are normalised to give a unit norm.
 
     Arguments:
-        values (np.ndarray|list): Matrix to normalise. (length * values)
+        matrix (np.ndarray): Matrix of values.
 
     Returns:
-        normalised (np.ndarray): Normalised, all-positive new matrix.
+        matrix (np.ndarray): Positive matrix with unit norm along axis=1.
+
+    Note:
+        - If used for mixing profile assumed shape is
+        timesteps/nscans * number components.
     """
-    values = np.array(values)
-    normalised = np.empty_like((values), dtype=float)
+    if np.min(matrix) > 0:
+        matrix += np.abs(np.min(matrix))
+    matrix = np.divide(matrix.T, np.linalg.norm(matrix, ord=1, axis=1)).T
 
-    if len(values.shape) == 1:
-        lvtmp = np.min(values)
-        if lvtmp < 0:
-            lv = np.abs(lvtmp)  # noqa: E701
-        else:
-            lv = 0  # noqa: E701
-        values = [v + lv for v in values]
-        normalised = np.array([x / np.sum(values) for x in values])
-
-    else:
-        for i in range(values.shape[0]):
-            tmp = values[i]
-            nvals = np.where(tmp < 0)[0]
-            if len(nvals) >= 1:
-                lv = np.min(tmp[nvals])  # noqa: E701
-            else:
-                lv = 0  # noqa: E701
-            values[i] = tmp - lv
-        for i in range(values.shape[1]):
-            normalised[:, i] = np.array(
-                [x / np.sum(values[:, i]) for x in values[:, i]]
-            )
-    return normalised
+    return matrix
