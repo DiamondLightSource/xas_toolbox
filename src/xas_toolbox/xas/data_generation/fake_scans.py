@@ -13,7 +13,7 @@ from .xafs_signal import make_signal
 logger = logging.getLogger(__name__)
 
 
-def xray_edge_data(elements:str|list[str], edge:str|list[str])->dict:
+def xray_edge_data(elements: str | list[str], edge: str | list[str]) -> dict:
     """
     From a list or single elements and one or more edges return a dictionary
     of information on e0 value, jump-ratio and fluorescence-yield ordered by e0 value.
@@ -33,7 +33,7 @@ def xray_edge_data(elements:str|list[str], edge:str|list[str])->dict:
 
     xray_data = {}
 
-    #multi-element data:
+    # multi-element data:
     if isinstance(elements, list):
         for i in range(len(elements)):
             if isinstance(edge, list):
@@ -43,7 +43,7 @@ def xray_edge_data(elements:str|list[str], edge:str|list[str])->dict:
             e0, fyield, jr = xray_edge(elements[i], edge_tmp)
             xray_data[elements[i]] = [e0, jr, fyield, edge]
 
-    #single-element data:
+    # single-element data:
     else:
         if isinstance(edge, list):
             for edge_tmp in edge:
@@ -57,14 +57,17 @@ def xray_edge_data(elements:str|list[str], edge:str|list[str])->dict:
     keys = ["e0", "jump-ratio", "fyield", "edge"]
     sorted_tmp = sorted(xray_data.items(), key=itemgetter(1))
     for k, v in sorted_tmp:
-        sorted_xray[k] = {keys[i]:v[i] for i in range(len(v))}
+        sorted_xray[k] = {keys[i]: v[i] for i in range(len(v))}
 
     return sorted_xray
 
+
 #### energy:
 
-def get_full_energy_range(xray_data:dict, npoints:int=1000, pre:float=200,\
-                           post:float=800)->np.ndarray:
+
+def get_full_energy_range(
+    xray_data: dict, npoints: int = 1000, pre: float = 200, post: float = 800
+) -> np.ndarray:
     """
     Get a uniform energy range spanning over all edges provided in xray_data dictionary. <br>
     The axis will be padded by -pre and +post to give extra spacing at the start and end of the fake-scan.
@@ -79,11 +82,12 @@ def get_full_energy_range(xray_data:dict, npoints:int=1000, pre:float=200,\
         energy_axis (np.ndarray): Uniform energy array.
     """  # noqa: E501
     energies = [xray_data[k]["e0"] for k in xray_data.keys()]
-    start = energies[0]-pre
-    stop = energies[-1]+post
+    start = energies[0] - pre
+    stop = energies[-1] + post
     return _get_padded_x(start=start, stop=stop, npoints=npoints)
 
-def _get_padded_x(start:float, stop:float, npoints:int=1000)->np.ndarray:
+
+def _get_padded_x(start: float, stop: float, npoints: int = 1000) -> np.ndarray:
     """
     Get a uniform array starting at <i>start</i> ending at <i>stop</i> with
     <i>npoints</i> data-points.
@@ -98,10 +102,22 @@ def _get_padded_x(start:float, stop:float, npoints:int=1000)->np.ndarray:
     """  # noqa: E501
     return np.linspace(start, stop, npoints)
 
+
 #### f2:
 
-def get_f2(formula:str|list[str], energy:np.ndarray):
 
+def get_f2(formula: str | list[str], energy: np.ndarray) -> np.ndarray:
+    """
+    Get the imaginary part of xray atomic form factor given
+    a formula and energy range.
+
+    Arguments:
+        formula (str|list[str]): Chemical formula/list of species.
+        energy (np.ndarray): Energy array.
+
+    Returns:
+        f2_abs (np.ndarray): Imaginary part of atomic form factor.
+    """
     f2_abs = np.zeros_like(energy)
 
     if isinstance(formula, str):
@@ -109,7 +125,7 @@ def get_f2(formula:str|list[str], energy:np.ndarray):
         for i in range(compound["nElements"]):
             elem = AtomicNumberToSymbol(compound["Elements"][i])
             count = compound["nAtoms"][i]
-            f2_abs += f2_chantler(elem, energy)*count
+            f2_abs += f2_chantler(elem, energy) * count
 
     elif isinstance(formula, list):
         f2_abs = np.zeros_like(energy)
@@ -118,12 +134,45 @@ def get_f2(formula:str|list[str], energy:np.ndarray):
 
     return f2_abs
 
+
 ### fake signal:
 
-def get_fake_xas(formula:str|list[str], absorber:str|list[str]=None,
-                edge:str|list[str]=None, energy_range:tuple[float, float]|None=None,
-                npoints:int=1000, pre:int=200,
-                post:int=800, exafs:bool=True, nscans:int=10):
+
+def get_fake_xas(
+    formula: str | list[str],
+    absorber: str | list[str] = None,
+    edge: str | list[str] = None,
+    energy_range: tuple[float, float] | None = None,
+    npoints: int = 1000,
+    pre: int = 200,
+    post: int = 800,
+    exafs: bool = True,
+    nscans: int = 10,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Generate unique fake xas-like signals for a given formula and edge(s)/
+    energy range.
+    If `absorber` and `edge` are provided, then `energy_range` is not needed/
+     if `energy_range` provided, `absorber` and `edge` will be ignored.
+
+    Arguments:
+        formula (str|list[str]): Formula/list of elements for fake scan.
+        absorber (str|list[str], Optional): Absorbing atom(s) in scan.
+        edge (str|list[str], Optional): Absorbing edge(s) to cover in energy range.
+        energy_range (tuple[float, float], Optional): Energy range to span.
+        npoints (int, Optional): Number of datapoints per scan. 1000 by default.
+        pre (int, Optional): Energy (eV) before first absorption edge to start the scan,
+                    `200` eV by default.
+        post (int, Optional): Energy (eV) after last absorption edge to end the scan,
+                    `800` eV by default.
+        xafs (bool, Optional): Whether to include exafs-like signal (`True` by default).
+        nscans (int, Optional): Number of scans to generate (`10` by default).
+
+    Returns:
+        tuple (tuple): tuple containing:
+            energy (np.ndarray): (1d) Energy array.
+            xafs (np.ndarray): (nscans * npoints) Array of fake spectra.
+    """
 
     if absorber is None and edge is not None:
         raise ValueError("Provide absorbing atom.")
@@ -155,7 +204,7 @@ def get_fake_xas(formula:str|list[str], absorber:str|list[str]=None,
     # get values to add xafs between
     e0s, pre_edges = find_edges(f2_abs)
     pre_edges = np.delete(pre_edges, 0)
-    pre_edges = np.append(pre_edges, npoints-1)
+    pre_edges = np.append(pre_edges, npoints - 1)
 
     xafs = make_signal(energy, xafs, e0s, pre_edges)
 
