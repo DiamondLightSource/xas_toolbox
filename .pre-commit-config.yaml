@@ -10,19 +10,19 @@ repos:
 
   - repo: local
     hooks:
-      # - id: ruff
-      #   name: lint with ruff
-      #   language: system
-      #   entry: ruff check --force-exclude --fix
-      #   types: [python]
-      #   require_serial: true
+      - id: ruff
+        name: lint with ruff
+        language: system
+        entry: ruff check 
+        types: [python]
+        require_serial: true
 
-      # - id: ruff-format
-      #   name: format with ruff
-      #   language: system
-      #   entry: ruff format --force-exclude
-      #   types: [python]
-      #   require_serial: true
+      - id: ruff-format
+        name: format with ruff
+        language: system
+        entry: ruff format
+        types: [python]
+        require_serial: true
 
       - id: uv-sync
         name: update uv.lock and venv
