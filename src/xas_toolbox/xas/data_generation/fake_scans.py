@@ -225,6 +225,29 @@ def make_fake_spectrum(
     exafs: bool = True,
     nscans: int = 10,
 ) -> XasMeasurement:
+    """
+    Generate fake XAS measurements and make into `XasMeasurement` objects. \\
+    If `absorber` and `edge` are provided, then `energy_range` is not needed/
+     if `energy_range` provided, `absorber` and `edge` will be ignored.
+
+    Arguments:
+        formula (str|list[str]): Formula/list of elements for fake scan.
+        absorber (str|list[str], Optional): Absorbing atom(s) in scan.
+        edge (str|list[str], Optional): Absorbing edge(s) to cover in energy range.
+        energy_range (tuple[float, float], Optional): Energy range to span.
+        npoints (int, Optional): Number of datapoints per scan. 1000 by default.
+        pre (int, Optional): Energy (eV) before first absorption edge to start the scan,
+                    `200` eV by default.
+        post (int, Optional): Energy (eV) after last absorption edge to end the scan,
+                    `800` eV by default.
+        xafs (bool, Optional): Whether to include exafs-like signal (`True` by default).
+        nscans (int, Optional): Number of scans to generate (`10` by default).
+
+    Returns:
+        out (XasMeasurement): `XasMeasurement` object holding the generated
+                            `energy` and `mu`. `out` will have `mode=transmission`.
+
+    """
     energy, xafs = get_fake_xas(
         formula,
         absorber=absorber,
