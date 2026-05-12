@@ -1,11 +1,14 @@
-from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader, AsciiReader
+from collections.abc import Callable
 from pathlib import Path
-from xas_toolbox.utils.scan_data import ScanData
-from typing import Union, Callable, Any
-        
+from typing import Any
+
 import h5py
 
-def _find_instrument(path:Path)->str:
+from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader
+from xas_toolbox.utils.scan_data import ScanData
+
+
+def _find_instrument(path: Path) -> str:
     """
     Find instrument used for a scan when nexus file format used.
     """
@@ -16,8 +19,10 @@ def _find_instrument(path:Path)->str:
         else:
             raise AttributeError("Instrument not found.")
 
-def _load_nxs(path:Path)->tuple[Callable[[ScanData], Any],
-                                    Union[B18Reader, I20Reader, I20_1Reader]]:
+
+def _load_nxs(
+    path: Path,
+) -> tuple[Callable[[ScanData], Any], B18Reader | I20Reader | I20_1Reader]:
     """
     For a nexus file, set the correct reader class (from `beamlines`)
     and get function to be used in making the `XasMeasurement` object.
@@ -27,7 +32,8 @@ def _load_nxs(path:Path)->tuple[Callable[[ScanData], Any],
 
     Returns:
         tuple (tuple): tuple containing:
-            get_data_fn (Callable[[ScanData], Any]): Function to request data from the file.
+            get_data_fn (Callable[[ScanData], Any]): Function to request data from the
+            file.
             reader (B18Reader | I20Reader | I20_1Reader): File path/data storage object.
     """
     instrument = _find_instrument(path)
@@ -37,14 +43,15 @@ def _load_nxs(path:Path)->tuple[Callable[[ScanData], Any],
         reader = I20Reader(path)
     elif instrument == "i20-1":
         reader = I20_1Reader(path)
-    else: raise NotImplementedError(f"{instrument} not supported.")
+    else:
+        raise NotImplementedError(f"{instrument} not supported.")
 
     get_data_fn = reader.get_value
 
     return get_data_fn, reader
 
-def _load_misc(path:Path)-> tuple[Callable[[ScanData], Any],
-                                       Union[AsciiReader, XdiReader]]:
+
+def _load_misc(path: Path) -> tuple[Callable[[ScanData], Any], XdiReader]:
     """
     Return correct data store object and getter function for
     xdi/dat files.
@@ -54,11 +61,13 @@ def _load_misc(path:Path)-> tuple[Callable[[ScanData], Any],
 
     Returns:
         tuple (tuple): Tuple containing:
-            get_data_fn (Callable[[ScanData], Any]): Function to request data from the file.
-            reader (DatReader | XdiReader): File path/data storage object.
+            get_data_fn (Callable[[ScanData], Any]): Function to request data from the
+            file.
+            reader (XdiReader): File path/data storage object.
     """
     if path.suffix == ".dat":
-        reader = AsciiReader(path)
+        raise NotImplementedError("Cannot currently read ascii files.")
+        # reader = AsciiReader(path)
     elif path.suffix == ".xdi":
         reader = XdiReader(path)
     get_data_fn = reader.get_value
