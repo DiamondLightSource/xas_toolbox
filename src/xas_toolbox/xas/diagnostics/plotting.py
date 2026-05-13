@@ -77,6 +77,8 @@ def plot_repetition_metrics(data: Group) -> list:
     ax.plot(x, y)
     ax.set_xlabel("Energy (eV)")
 
+    figures.append(fig)
+
     fig, ax = plt.subplots(2, 2, figsize=(10, 4), layout="tight")
     fig.suptitle(r"Average $\mu$ autobk \\n Edge Value = " + str(data.e0_avr))
     ax[0, 0].set_title("Pre and post-edge fit")
