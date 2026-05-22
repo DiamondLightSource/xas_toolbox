@@ -50,7 +50,7 @@ class MultipleFileReader:
         for path in self.paths:
             if path.suffix == ".nxs":
                 instrument = _find_instrument(path)
-                if instrument == ["b18"]:
+                if instrument == "['b18']":
                     self.readers[f"{path}"] = LegacyB18Reader(path)
                 if instrument == "b18":
                     self.readers[f"{path}"] = B18Reader(path)

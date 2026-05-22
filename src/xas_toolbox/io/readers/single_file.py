@@ -43,7 +43,7 @@ def _load_nxs(
             reader (B18Reader | I20Reader | I20_1Reader): File path/data storage object.
     """
     instrument = _find_instrument(path)
-    if instrument == ["b18"]:
+    if instrument == "['b18']":
         reader = LegacyB18Reader(path)
     if instrument == "b18":
         reader = B18Reader(path)
