@@ -6,7 +6,6 @@ from typing import Any
 import numpy as np
 
 from xas_toolbox.io.filetypes import (
-    AsciiReader,
     B18Reader,
     I20_1Reader,
     I20Reader,
@@ -64,7 +63,8 @@ class MultipleFileReader:
                     continue
 
             elif path.suffix == ".dat":
-                self.readers[f"{path}"] = AsciiReader(path)
+                raise NotImplementedError("Cannot currently read ascii files.")
+                # self.readers[f"{path}"] = AsciiReader(path)
             elif path.suffix == ".xdi":
                 self.readers[f"{path}"] = XdiReader(path)
             else:
