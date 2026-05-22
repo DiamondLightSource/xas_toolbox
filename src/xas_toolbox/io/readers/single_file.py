@@ -4,7 +4,13 @@ from typing import Any
 
 import h5py
 
-from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader
+from xas_toolbox.io.filetypes import (
+    B18Reader,
+    I20_1Reader,
+    I20Reader,
+    LegacyB18Reader,
+    XdiReader,
+)
 from xas_toolbox.utils.scan_data import ScanData
 
 
@@ -37,6 +43,8 @@ def _load_nxs(
             reader (B18Reader | I20Reader | I20_1Reader): File path/data storage object.
     """
     instrument = _find_instrument(path)
+    if instrument == ["b18"]:
+        reader = LegacyB18Reader(path)
     if instrument == "b18":
         reader = B18Reader(path)
     elif instrument == "i20":

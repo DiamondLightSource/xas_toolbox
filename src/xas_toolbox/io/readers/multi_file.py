@@ -5,7 +5,13 @@ from typing import Any
 
 import numpy as np
 
-from xas_toolbox.io.filetypes import B18Reader, I20_1Reader, I20Reader, XdiReader
+from xas_toolbox.io.filetypes import (
+    B18Reader,
+    I20_1Reader,
+    I20Reader,
+    LegacyB18Reader,
+    XdiReader,
+)
 from xas_toolbox.utils.scan_data import ElementMeta, ScanData, ScanMeta
 
 from .single_file import _find_instrument
@@ -44,6 +50,8 @@ class MultipleFileReader:
         for path in self.paths:
             if path.suffix == ".nxs":
                 instrument = _find_instrument(path)
+                if instrument == ["b18"]:
+                    self.readers[f"{path}"] = LegacyB18Reader(path)
                 if instrument == "b18":
                     self.readers[f"{path}"] = B18Reader(path)
                 elif instrument == "i20":
