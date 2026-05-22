@@ -5,6 +5,7 @@ from typing import Any
 import h5py
 
 from xas_toolbox.io.filetypes import (
+    AsciiReader,
     B18Reader,
     I20_1Reader,
     I20Reader,
@@ -74,8 +75,8 @@ def _load_misc(path: Path) -> tuple[Callable[[ScanData], Any], XdiReader]:
             reader (XdiReader): File path/data storage object.
     """
     if path.suffix == ".dat":
-        raise NotImplementedError("Cannot currently read ascii files.")
-        # reader = AsciiReader(path)
+        # raise NotImplementedError("Cannot currently read ascii files.")
+        reader = AsciiReader(path)
     elif path.suffix == ".xdi":
         reader = XdiReader(path)
     get_data_fn = reader.get_value
