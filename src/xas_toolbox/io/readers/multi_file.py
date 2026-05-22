@@ -52,7 +52,7 @@ class MultipleFileReader:
                 instrument = _find_instrument(path)
                 if instrument == "['b18']":
                     self.readers[f"{path}"] = LegacyB18Reader(path)
-                if instrument == "b18":
+                elif instrument == "b18":
                     self.readers[f"{path}"] = B18Reader(path)
                 elif instrument == "i20":
                     self.readers[f"{path}"] = I20Reader(path)

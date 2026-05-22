@@ -45,7 +45,7 @@ def _load_nxs(
     instrument = _find_instrument(path)
     if instrument == "['b18']":
         reader = LegacyB18Reader(path)
-    if instrument == "b18":
+    elif instrument == "b18":
         reader = B18Reader(path)
     elif instrument == "i20":
         reader = I20Reader(path)
