@@ -3,6 +3,8 @@ Different methods from find_e0 for edge-finding. <br>
 These are mainly for low-noise f2 data.
 """
 
+from typing import Any
+
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 from scipy.interpolate import interp1d
@@ -46,7 +48,7 @@ def find_edges(y: np.ndarray, filter: bool = False) -> tuple[np.ndarray, np.ndar
 
 def get_edge_bounds(
     x: np.ndarray, y: np.ndarray, edge_energy: float
-) -> tuple[int, tuple[int, int], int]:
+) -> tuple[Any, list[Any], Any]:
     """
     Find the closest edge and bounds around it given a target energy.
 

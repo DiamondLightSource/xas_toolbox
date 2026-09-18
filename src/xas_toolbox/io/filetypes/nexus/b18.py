@@ -99,7 +99,7 @@ class B18Reader(NxsReader):
         """
         if self.mcaParams["mcas"] is None:
             logger.warning("Scan is not in fluorescence mode.")
-            return
+            return None
 
         with h5py.File(self.mcaParams["mcas"], "r") as f:
             scalars = list(filter(lambda k: "scalar" in k, f.keys()))

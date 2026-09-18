@@ -25,7 +25,7 @@ def _get_start_stop(
         if np.all(slice):
             ss.append((coords[start], coords[-1] + 1))
             break  # noqa: E701, E702
-        stop = np.argmin(slice) + start
+        stop = np.argmin(np.array(slice)) + start
         ss.append((coords[start], coords[stop] + 1))
         start = stop + 1  # noqa: E702
         if start == size:

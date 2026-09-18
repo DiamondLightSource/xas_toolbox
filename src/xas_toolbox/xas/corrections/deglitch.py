@@ -26,7 +26,7 @@ def median_deglitch(y: np.ndarray, window: int | float, threshold: float) -> np.
 
     if y.ndim == 1:
         yf = np.pad(y, pad_width, mode="edge")
-        yf = np.mean(sliding_window_view(yf, window), axis=1)
+        yf = np.mean(sliding_window_view(np.array(yf), window), axis=1)
         tol = np.std(yf - y)
         yf = np.where(np.abs(yf - y) > tol * threshold, y, yf)
     else:

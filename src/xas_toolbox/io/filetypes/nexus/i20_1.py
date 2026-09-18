@@ -96,7 +96,7 @@ class I201Reader(NxsReader):
         """
         if val not in self.elementMeta.keys():
             logger.warning(f"{val} not present in file")
-            return
+            return None
 
         if self.elementMeta[val] is None:
             self._make_element_meta()

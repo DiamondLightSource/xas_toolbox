@@ -40,7 +40,11 @@ def interpolate_data(
 
 
 def interpolate_with_bounds(
-    x: np.ndarray, y: np.ndarray, npoints: int, bounds: tuple, method: str = "Pchip"
+    x: np.ndarray,
+    y: np.ndarray,
+    npoints: int,
+    bounds: tuple[int, int],
+    method: str = "Pchip",
 ):
     x, y = _remove_negative_gradient(x, y)
     xtarget = np.linspace(*bounds, npoints)
