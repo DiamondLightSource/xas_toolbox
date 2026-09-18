@@ -69,3 +69,7 @@ lockfiles/
 
 # ruff cache
 .ruff_cache/
+
+# other names
+.jython_cache/
+tst/
