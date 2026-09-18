@@ -201,6 +201,8 @@ def get_fake_xas(
     xafs[:] = f2_abs
 
     if not exafs:
+        if nscans == 1:
+            xafs = xafs[0]
         return energy, xafs
 
     # get values to add xafs between

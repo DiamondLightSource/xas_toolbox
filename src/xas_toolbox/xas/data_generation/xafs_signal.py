@@ -37,7 +37,7 @@ def damped_sine(x: np.ndarray, nscans: int) -> np.ndarray:
     npts = np.empty(nscans)
     npts.fill(npoints)  # noqa: E702, UP034
     halflife = npts / wherestop
-    decayf = np.divide(xn, halflife[:, None], where=halflife[:, None] != 0)
+    decayf = np.divide(xn, halflife[:, None], where=halflife[:, None] != 0, out=None)
     decay = 2**-(decayf)
 
     phase = _rng.normal(np.pi / 4, np.pi / 7, nscans)
@@ -50,9 +50,10 @@ def damped_sine(x: np.ndarray, nscans: int) -> np.ndarray:
         decay,
         np.sin(
             np.add(
-                np.multiply(xn, omega[:, None], where=omega[:, None] != 0),
+                np.multiply(xn, omega[:, None], where=omega[:, None] != 0, out=None),
                 phase[:, None],
                 where=phase[:, None] != 0,
+                out=None,
             )
         ),
     )
@@ -95,11 +96,15 @@ def make_signal(
             signal_sum / np.abs(np.nanmax(signal_sum)),
             damping[:, None],
             where=damping[:, None] != 0,
+            out=None,
         )  # noqa: E501
 
         ints = _rng.choice(np.arange(1, 1.2, 0.1), nscans)
         y[:, lo : lo + 5] = np.multiply(
-            np.abs(y[:, lo : lo + 5]), ints[:, None], where=ints[:, None] != 0
+            np.abs(y[:, lo : lo + 5]),
+            ints[:, None],
+            where=ints[:, None] != 0,
+            out=None,
         )  # noqa: E501
 
     return y
