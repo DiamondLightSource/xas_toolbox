@@ -63,6 +63,12 @@
             "source": "devcontainer-shared-cache",
             "target": "/cache",
             "type": "volume"
+        },
+        // IGNORE!! Lucy add for testing.
+        {
+         "type":"bind", 
+         "source":"/dls", 
+         "target":"/dls"
         }
     ],
     // Mount the parent as /workspaces so we can pip install peers as editable

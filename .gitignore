@@ -67,9 +67,12 @@ venv*
 # other names to be ignored
 old*
 tst*
+*tests/case_2b_noisy.h5*
 
 # further build artifacts
 lockfiles/
 
 # ruff cache
 .ruff_cache/
+
+.jython*
