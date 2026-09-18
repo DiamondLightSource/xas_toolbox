@@ -12,7 +12,16 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
 ]
 description = "A python package for processing and analysis of X-ray spectroscopy data"
-dependencies = [] # Add project dependencies here, e.g. ["click", "numpy"]
+dependencies = [
+    "h5py==3.13.0",
+    "hdf5plugin==5.1.0",
+    "matplotlib==3.10.1",
+    "xraylarch==2025.2.0",
+    "scipy==1.15.2",
+    "lxml==6.0.2",
+    "xraylib==4.2.1",
+    "numpy>=2.4.6",
+]
 dynamic = ["version"]
 license.file = "LICENSE"
 readme = "README.md"
