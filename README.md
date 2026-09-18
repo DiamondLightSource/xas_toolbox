@@ -11,9 +11,16 @@ A python package for processing and analysis of X-ray spectroscopy data
 This is where you should write a short paragraph that describes what your module does,
 how it does it, and why people should use it.
 
+<<<<<<< before updating
 Source          | <https://github.com/DiamondLightSource/xas_toolbox>
 :---:           | :---:
 Releases        | <https://github.com/DiamondLightSource/xas_toolbox/releases>
+=======
+What            | Where
+:---:           | :---:
+Source          | <https://github.com/DiamondLightSource/xas-toolbox>
+Releases        | <https://github.com/DiamondLightSource/xas-toolbox/releases>
+>>>>>>> after updating
 
 This is where you should put some images or code snippets that illustrate
 some relevant examples. If it is a library then you might put some
