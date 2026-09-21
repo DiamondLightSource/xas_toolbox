@@ -59,7 +59,7 @@ def interp_stack(
         y_out (np.ndarray|None): The interpolated y data.
     """
     if yval is None:
-        return
+        return None
 
     y_out = np.empty((yval.shape[0], len(x_t)))
 

@@ -41,11 +41,12 @@ def calc_energy_shift(
         delta_e = np.empty(y.shape[0])
         e0_pred, e0_calc = compare_e0s(x[0, :], y[0, :], symbol, edge)
         delta_e0 = e0_pred - e0_calc
-        delta_e[0] = delta_e0
+        np.array(delta_e)[0] = delta_e0
 
         for i in range(y.shape[0]):
             e0_tmp, idx_tmp, eno = calc_e0(x[i, :], y[i, :])
-            e0_tmp = e0_tmp[0]
+            if isinstance(e0_tmp, list):
+                e0_tmp = e0_tmp[0]
             delta_ei = e0_pred - e0_tmp
             x_out[i, :] += delta_ei
             delta_e[i] = delta_ei
@@ -70,8 +71,8 @@ def align_scan(scan: XasMeasurement) -> XasMeasurement:
     symbol, edge = None, None
 
     x = scan.energy
-    if hasattr(scan, "refData"):
-        y = scan.refData.murefer
+    if hasattr(scan, "refData") and scan.refData:
+        y: np.ndarray = scan.refData.murefer
     else:
         raise AttributeError("Scan has no reference data.")
     if hasattr(scan, "meta"):
@@ -95,6 +96,7 @@ def align_scan(scan: XasMeasurement) -> XasMeasurement:
 
     scan_out = XasMeasurement(get_value=scan._get_value)  # noqa: SLF001
     scan_out.energy = x_out
-    scan_out.auxData.energy = x_out
+    if scan_out.auxData:
+        scan_out.auxData.energy = x_out
     scan_out.meta.energy_shift = delta_x
     return scan_out
