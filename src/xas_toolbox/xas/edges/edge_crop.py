@@ -9,7 +9,7 @@ from xas_toolbox.xas.edges.find_edges import get_edge_bounds
 logger = logging.getLogger(__name__)
 
 
-def edge_crop(
+def crop_by_edge(
     x: np.ndarray, y: np.ndarray
 ) -> None | tuple[list | np.ndarray, list | np.ndarray]:
     """

@@ -4,7 +4,7 @@ from typing import Literal
 import numpy as np
 from numpy.polynomial.polynomial import Polynomial
 
-from xas_toolbox.xas.edges import calc_e0, edge_crop
+from xas_toolbox.xas.edges import calc_e0, crop_by_edge
 
 log = logging.getLogger(__name__)
 
@@ -291,7 +291,7 @@ def pre_edge(
             if mode == "Crop":
                 norm, flat, edge_step = [], [], []
                 pre_bkg, post_bkg = [], []
-                x, y = edge_crop(x, y)
+                x, y = crop_by_edge(x, y)
                 for i in range(len(x)):
                     e0_idx_tmp = np.where(x[i] >= e0[i])[0][0]
 
