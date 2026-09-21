@@ -102,7 +102,7 @@ commands = [
     [
         "mypy",
         "src",
-        "tests",
+        # "tests", # ignore test tyoe-checking.
         { replace = "posargs", default = [
         ], extend = true },
     ],

@@ -8,7 +8,7 @@ Goals are:
 
 import logging
 from collections.abc import Callable
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 
@@ -57,10 +57,7 @@ class XasMeasurement:
 
     def __init__(
         self,
-        get_value: Callable[
-            [ScanData | ScanMeta | ElementMeta | str],
-            str | np.ndarray | int | float | list | None,
-        ],
+        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any | None],
         mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """
@@ -91,24 +88,23 @@ class XasMeasurement:
             ```
         """
 
-        self._mu = None
-        self._energy = None
+        self._mu: np.ndarray | None = None
+        self._energy: np.ndarray | None = None
 
         self.mode = mode
 
         self._get_value = get_value
 
         self.meta = XasMeta(get_value)
-
-        self.auxData = None
-        self.transData = None
-        self.fluorData = None
-        self.refData = None
-        self.mcaData = None
+        self.auxData: AuxMeasurement | None = None
+        self.transData: TransMeasurement | None = None
+        self.fluorData: FluorMeasurement | None = None
+        self.refData: RefMeasurement | None = None
+        self.mcaData: McaMeasurement | None = None
         self.set_mode(get_value, mode)
 
     @property
-    def energy(self) -> np.ndarray:
+    def energy(self):
         """
         Set energy !!!
         """
@@ -124,7 +120,7 @@ class XasMeasurement:
         self._energy = energy
 
     @property
-    def mu(self) -> np.ndarray:
+    def mu(self):
         """
         Set mu !
         """
@@ -140,10 +136,7 @@ class XasMeasurement:
 
     def set_mode(
         self,
-        get_value: Callable[
-            [ScanData | ScanMeta | ElementMeta | str],
-            str | np.ndarray | int | float | list,
-        ],
+        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any | None],
         mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """

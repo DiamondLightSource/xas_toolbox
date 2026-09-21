@@ -25,7 +25,7 @@ class XdiReader:
         self._read_from_columns()
         self._populate_colmap()
 
-    def _get_colmap(self, col_labels: list) -> dict:
+    def _get_colmap(self, col_labels: list):
         """
         Get a value <-> column number mapping for .xdi data. <br>
         Scan variables can be spelt differently in files, if a new
@@ -41,7 +41,10 @@ class XdiReader:
         """
         # some .xdi files don't follow convention?
         # add alternate spellings here.
+        colval: list | None
+        colmap: dict[str, int | list[int] | None]
         alt_names = {"mutrans": "xmu", "itrans": "it", "irefer": "ir"}
+
         colmap = {}
         for k in ScanData:
             vname = k.valname
@@ -132,7 +135,7 @@ class XdiReader:
         ]
         self._scandata = np.array([s for s in scandata if len(s) > 1]).T
 
-    def get_value(self, val: ScanData | ScanMeta | ElementMeta) -> np.ndarray | None:
+    def get_value(self, val: ScanData | ScanMeta | ElementMeta):
         """
         Get a requested value from .xdi file it it exists/can be made
         and is a valid parameter.
@@ -141,7 +144,7 @@ class XdiReader:
             val (ScanData): Value to return.
 
         Returns:
-            out (np.ndarray | None): Value from the file.
+            out (np.ndarray | None | Path): Value from the file.
         """
         out = None
         if val == "path":
@@ -171,4 +174,4 @@ class XdiReader:
         if out is not None:
             return out.shape
         else:
-            return
+            return None

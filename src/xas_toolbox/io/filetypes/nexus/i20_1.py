@@ -7,8 +7,6 @@ import re
 
 import h5py
 
-from xas_toolbox.utils.scan_data import ElementMeta
-
 from .nxs_reader import NxsReader
 
 logger = logging.getLogger(__name__)
@@ -68,29 +66,32 @@ class I201Reader(NxsReader):
 
     def _make_element_meta(self) -> None:
 
-        mdetails = self.elementMeta["_path"]
-        with h5py.File(self.path, "r") as f:
-            if mdetails[0] in f.keys():
-                meta = f[mdetails[0]]
-                if mdetails[1] in meta.attrs.keys():
-                    info = meta.attrs[f"{mdetails[1]}"][:].decode("utf-8")
+        mdetails: str | list[str] | None = self.elementMeta["_path"]
+        if isinstance(mdetails, list):
+            with h5py.File(self.path, "r") as f:
+                if mdetails[0] in f.keys():
+                    meta = f[mdetails[0]]
+                    if mdetails[1] in meta.attrs.keys():
+                        info = meta.attrs[f"{mdetails[1]}"][:].decode("utf-8")
+                    else:
+                        return None
+
+                    sample: list[str] = list(
+                        filter(lambda p: mdetails[-1] in p, info.split(","))
+                    )
+                    if len(sample) < 1:
+                        return None
+                    sdetails = re.findall("[A-Z][a-z]?_[A-Z]\\d?", sample[0])[0]
+                    symbol, edge = sdetails.split("_")
+                    self.elementMeta["symbol"] = symbol
+                    self.elementMeta["edge"] = edge
+                    self.elementMeta["reference"] = symbol
+                    self.elementMeta["ref_edge"] = edge
+
                 else:
-                    return
+                    return None
 
-                sample = list(filter(lambda p: mdetails[-1] in p, info.split(",")))
-                if len(sample) < 1:
-                    return
-                sdetails = re.findall("[A-Z][a-z]?_[A-Z]\\d?", sample[0])[0]
-                symbol, edge = sdetails.split("_")
-                self.elementMeta["symbol"] = symbol
-                self.elementMeta["edge"] = edge
-                self.elementMeta["reference"] = symbol
-                self.elementMeta["ref_edge"] = edge
-
-            else:
-                return
-
-    def _get_element_meta(self, val: ElementMeta) -> str | None:
+    def _get_element_meta(self, val: str):
         """
         Get element metadata from scan (e.g. absorbing edge and element).
         """
@@ -101,4 +102,4 @@ class I201Reader(NxsReader):
         if self.elementMeta[val] is None:
             self._make_element_meta()
 
-        return self.elementMeta[val]
+        return self.elementMeta[str(val)]

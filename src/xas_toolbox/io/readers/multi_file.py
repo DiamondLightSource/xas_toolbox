@@ -1,7 +1,6 @@
 import logging
 from collections import Counter
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -42,13 +41,15 @@ class MultipleFileReader:
         if meta_filter is True:
             self._filter_by_edge()
 
-    def _make_readers(self) -> None:
+    def _make_readers(self):
         """
         Add a dictionary of individual readers with keys
         corresponding to their file paths to `self`.
         """
         self.readers = {}
         for path in self.paths:
+            if isinstance(path, str):
+                path = Path(path)
             if path.suffix == ".nxs":
                 instrument = _find_instrument(path)
                 if instrument == "['b18']":
@@ -102,7 +103,7 @@ class MultipleFileReader:
         self.readers = {k: v for k, v in self.readers.items() if k not in to_rm}
         self.paths = [p for p in self.paths if f"{p}" not in to_rm]
 
-    def _get_ScanData(self, value: ScanData) -> np.ndarray | None:  # noqa: N802
+    def _get_ScanData(self, value: ScanData | str) -> np.ndarray | None:  # noqa: N802
         """
         Numerical data from the files in the stack are read in this way. <br>
         Currently if lengths between the same values in different scans are different
@@ -114,6 +115,8 @@ class MultipleFileReader:
         Returns:
             out (np.ndarray|None): Array of stacked data for given value.
         """
+        if self.readers is None:
+            return None
         _skip = []
         # remove the scans that don't include the given value.
         nscans = len(self.paths)
@@ -173,7 +176,7 @@ class MultipleFileReader:
 
         return out
 
-    def _get_ScanMeta(self, value: ScanMeta) -> list:  # noqa: N802
+    def _get_ScanMeta(self, value: ScanMeta | str):  # noqa: N802
         """
         Scan metadata is read via this, it will always give a list
         of values since different scans comprise the stack.
@@ -184,12 +187,15 @@ class MultipleFileReader:
         Returns:
             vals (list[Any]): List of values for each scan.
         """
-        vals = []
-        for _k, v in self.readers.items():
-            vals.append(v.get_value(value))
-        return vals
+        if self.readers is not None:
+            vals = []
+            for _k, v in self.readers.items():
+                vals.append(v.get_value(value))
+            return vals
+        else:
+            return None
 
-    def _get_ElementMeta(self, value: ElementMeta) -> str | list[str]:  # noqa: N802
+    def _get_ElementMeta(self, value: ElementMeta | str):  # noqa: N802
         """
         Load element metadata (e.g. absorbing atom, edge) for the stack.
         If the data making the stack has been filtered this will give single
@@ -202,18 +208,19 @@ class MultipleFileReader:
         Returns:
             out (str | list[str]): Single value/list of values requested.
         """
-        if self.__filtered is True:
-            tmp = self.readers[list(self.readers.keys())[0]]
-            return tmp.get_value(value)
+        if self.readers is not None:
+            if self.__filtered is True:
+                tmp = self.readers[list(self.readers.keys())[0]]
+                return tmp.get_value(value)
+            else:
+                vals = []
+                for _k, v in self.readers.items():
+                    vals.append(v.get_value(value))
+                return vals
         else:
-            vals = []
-            for _k, v in self.readers.items():
-                vals.append(v.get_value(value))
-            return vals
+            return None
 
-    def get_value(
-        self, val: ScanData | ElementMeta | ScanMeta
-    ) -> np.ndarray | str | list[Any] | None:
+    def get_value(self, val: ScanData | ElementMeta | ScanMeta | str):
         """
         Method for getting data from the stack of data, to be used
         when accessing any of the scan data/meta data.
@@ -224,11 +231,19 @@ class MultipleFileReader:
         Returns:
             out Union[np.ndarray, str, list[Any], None]: The value requested.
         """
-        if val in ScanData.__members__.keys():
+        if isinstance(val, str):
+            if val in ScanData.__members__.keys():
+                return self._get_ScanData(val)
+            elif val in ElementMeta.__members__.keys():
+                return self._get_ElementMeta(val)
+            elif val in ScanMeta.__members__.keys():
+                return self._get_ScanMeta(val)
+
+        if isinstance(val, ScanData):
             return self._get_ScanData(val)
-        elif val in ElementMeta.__members__.keys():
+        elif isinstance(val, ElementMeta):
             return self._get_ElementMeta(val)
-        elif val in ScanMeta.__members__.keys():
+        elif isinstance(val, ScanMeta):
             return self._get_ScanMeta(val)
 
         else:
