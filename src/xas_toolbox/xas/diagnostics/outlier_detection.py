@@ -24,7 +24,7 @@ def _calculate_lambda(alpha: float, n: int, i: int) -> float:
 
 def gesd_outlier_detection(
     y: np.ndarray, filter_size: int, p: float = 0.05, no_outs: int = 50
-) -> np.ndarray[int] | list[np.ndarray[int]]:
+):
     """
     Using the generalized extreme student deviate test, identify potential outlier \
         points in an array.
@@ -49,8 +49,6 @@ def gesd_outlier_detection(
     if y.ndim == 1:
         ydiff = y - median_filter(y, filter_size)
 
-        where_out = []
-
         for i in range(1, no_outs + 1):
             _mean, _std = np.nanmean(ydiff), np.nanstd(ydiff)
             pos = np.nanargmax(np.abs(ydiff - _mean))
@@ -65,10 +63,9 @@ def gesd_outlier_detection(
         ydiff = y - np.apply_along_axis(
             partial(median_filter, size=filter_size), axis=1, arr=y
         )
-        where_out = []
-        outlier_points = []
+
+        outlier_points: list[np.ndarray] = []
         for k in range(ydiff.shape[0]):
-            where_out_tmp = []
             diff = ydiff[k, :]
             for i in range(1, no_outs + 1):
                 _mean, _std = np.nanmean(diff), np.nanstd(diff)
@@ -80,7 +77,7 @@ def gesd_outlier_detection(
                 diff[pos] = np.nan
                 where_out_tmp = np.sort(np.arange(0, diff.size)[np.isnan(diff)])
                 outlier_idx = np.array(where_out_tmp).flatten()
-                outlier_points.append(outlier_idx)
+                list(outlier_points).append(outlier_idx)
 
     return outlier_points
 
@@ -91,7 +88,7 @@ def normal_outlier_detection(
     order: int,
     tol: float,
     method: Literal["stdev", "MAD"] = "stdev",
-) -> np.ndarray[int] | list[np.ndarray[int]]:
+):
     """
     Outlier points identified based on standard deviation or MAD values
       (reliance on data being normally distributed hence the name..).
@@ -129,7 +126,7 @@ def remove_edge_jump(
     outliers: np.ndarray | list[np.ndarray],
     pre: float = 30,
     post: float = 50,
-) -> np.ndarray[int] | list[np.ndarray[int]]:
+):
     """
     Remove outlier coordinates if they are in a region around the absorption
     edge.
@@ -167,7 +164,7 @@ def remove_edge_jump(
     return outliers
 
 
-def detect_outlier_scans(y: np.ndarray, scaling: float = 3) -> np.ndarray | None:
+def detect_outlier_scans(y: np.ndarray, scaling: float = 3):
     """
     Routine previously from b18 repetitions (autoprocessing) for
     identifying if a scan in a series of repetition scans is an outlier.
