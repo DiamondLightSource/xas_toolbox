@@ -8,7 +8,7 @@ def mix_scans(
     profiles: np.ndarray,
     absorption: list[np.ndarray],
     energy: list[np.ndarray] | np.ndarray,
-) -> tuple[np.ndarray, np.ndarray]:
+):
     """
     Mix a series of absorption values with their own respective energies according
     to profiles provided.
@@ -45,17 +45,17 @@ def mix_scans(
         energy = np.array(energy)
     if energy.ndim > 1:
         energy_out = get_target_energy(np.array(energy))
-        absorption = interp_stack(energy, absorption, energy_out)
+        absorption = interp_stack(energy, np.array(absorption), energy_out)
     else:
         energy_out = energy
 
     # absorption = interp_stack(energy, absorption, energy_out)
 
-    out = np.zeros((profiles.shape[0], absorption.shape[1]))
+    out = np.zeros((profiles.shape[0], np.array(absorption).shape[1]))
 
     # ...
     for i in range(profiles.shape[0]):
         conc = profiles[i, :]
-        out[i, :] = np.sum(np.multiply(absorption.T, conc), axis=1)
+        out[i, :] = np.sum(np.multiply(np.array(absorption).T, conc), axis=1)
 
     return energy_out, out

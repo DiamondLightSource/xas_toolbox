@@ -59,7 +59,7 @@ class XasMeasurement:
         self,
         get_value: Callable[
             [ScanData | ScanMeta | ElementMeta | str],
-            str | np.ndarray | int | float | list,
+            str | np.ndarray | int | float | list | None,
         ],
         mode: Literal["fluorescence", "transmission"] | None = None,
     ):

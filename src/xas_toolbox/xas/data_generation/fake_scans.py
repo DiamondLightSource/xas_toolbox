@@ -141,8 +141,8 @@ def get_f2(formula: str | list[str], energy: np.ndarray) -> np.ndarray:
 
 def get_fake_xas(
     formula: str | list[str],
-    absorber: str | list[str] = None,
-    edge: str | list[str] = None,
+    absorber: str | list[str] | None = None,
+    edge: str | list[str] | None = None,
     energy_range: tuple[float, float] | None = None,
     npoints: int = 1000,
     pre: int = 200,
@@ -220,8 +220,8 @@ def get_fake_xas(
 ## to XasMeasurement:
 def make_fake_spectrum(
     formula: str | list[str],
-    absorber: str | list[str] = None,
-    edge: str | list[str] = None,
+    absorber: str | list[str] | None = None,
+    edge: str | list[str] | None = None,
     energy_range: tuple[float, float] | None = None,
     npoints: int = 1000,
     pre: int = 200,
@@ -264,7 +264,7 @@ def make_fake_spectrum(
         nscans=nscans,
     )
 
-    def _get_fn(valname: str):
+    def _get_fn(valname: str) -> np.ndarray | None:
         if valname == "energy":
             return energy
         if valname == "mu" or valname == "mutrans":

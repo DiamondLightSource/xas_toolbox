@@ -43,9 +43,7 @@ def get_target_energy(x: np.ndarray) -> np.ndarray:
     return x_t
 
 
-def interp_stack(
-    xval: np.ndarray, yval: np.ndarray | None, x_t: np.ndarray
-) -> np.ndarray | None:
+def interp_stack(xval: np.ndarray, yval: np.ndarray | None, x_t: np.ndarray):
     """
     Interpolate a stack of x and y data onto target axis (assumes that
     fill value for differently sized elements of x and y is `NaN`).
@@ -71,7 +69,7 @@ def interp_stack(
     return y_out
 
 
-def align_stack(scan: XasMeasurement) -> XasMeasurement:
+def align_stack(scan: XasMeasurement):
     """
     Find common energy axis for stacked data and interpolate `mu`
     such that new datapoints are not introduced into the data.
