@@ -25,15 +25,15 @@ def median_deglitch(y: np.ndarray, window: int | float, threshold: float) -> np.
     pad_width = window // 2
 
     if y.ndim == 1:
-        yf = np.pad(y, pad_width, mode="edge")
-        yf = np.mean(sliding_window_view(np.array(yf), window), axis=1)
+        yf = np.pad(y, int(pad_width), mode="edge")
+        yf = np.mean(sliding_window_view(np.array(yf), int(window)), axis=1)
         tol = np.std(yf - y)
         yf = np.where(np.abs(yf - y) > tol * threshold, y, yf)
     else:
         yf = np.apply_along_axis(
-            partial(np.pad, pad_width=pad_width, mode="edge"), axis=1, arr=y
+            partial(np.pad, pad_width=int(pad_width), mode="edge"), axis=1, arr=y
         )
-        yf = np.mean(sliding_window_view(yf, window, axis=1), axis=-1)
+        yf = np.mean(sliding_window_view(yf, int(window), axis=1), axis=-1)
         tol = np.std(yf - y, axis=1)
 
         # could be changed..?
