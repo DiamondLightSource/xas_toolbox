@@ -17,7 +17,7 @@ def pre_edge_single_edge(
     bounds_hi: tuple[int, int],
     pre_order: int,
     post_order: int,
-) -> tuple[np.ndarray, np.ndarray, float]:
+):
     """
     Pre- and post-edge background finding for a single
     e0 value and single array of absorption data (y = 1d).
@@ -63,7 +63,7 @@ def pre_edge_bkg(
     e0_idx: int | list[int],
     pre_order: int,
     post_order: int,
-) -> tuple[np.ndarray, np.ndarray, float | np.ndarray[float]]:
+):
     """
     Find pre-edge and post-edge baselines for a scan by\
     fitting a polynomial within bounds.
@@ -87,7 +87,11 @@ def pre_edge_bkg(
     """
 
     if y.ndim == 1:
+        if isinstance(e0, np.ndarray | list):
+            e0 = float(e0[0])
         e0_round_up = np.where(x >= e0 + 30)[0][0]
+        if isinstance(e0_idx, np.ndarray | list):
+            e0_idx = int(e0_idx[0])
         _lo = int(e0_idx / 2)
         pre_hi = np.where(y[_lo:e0_idx] <= np.median(y[_lo:e0_idx]))[0][-1] + _lo
         post_lo = (
@@ -102,8 +106,8 @@ def pre_edge_bkg(
 
     # non uniform multi-edge stacks of data will need different treatment.
     if y.ndim > 1:
-        poly_pre = np.empty_like(y)
-        poly_post = np.empty_like(y)
+        poly_pre = np.empty_like(y, dtype=y.dtype)
+        poly_post = np.empty_like(y, dtype=y.dtype)
         edge_step = np.empty(y.shape[0])
 
         ymed = np.median(y, axis=0)
@@ -122,6 +126,8 @@ def pre_edge_bkg(
         )
 
         if isinstance(e0, list):
+            if isinstance(e0_idx, int):
+                e0_idx = [e0_idx]
             if len(set(e0)) > 1:
                 for i in range(y.shape[0]):
                     # make sure only first edge looked at for stacks.
@@ -173,7 +179,7 @@ def norm_and_flatten(
     edge_step: float | np.ndarray,
     ie0: int | np.ndarray[int],
     flatten: bool = True,
-) -> tuple[np.ndarray, np.ndarray]:
+):
     """
     Normalised and optionally flatten data given pre-
     and post-edge backgrounds.
@@ -202,6 +208,8 @@ def norm_and_flatten(
         else:
             yflat = None
     else:
+        if isinstance(edge_step, float):
+            edge_step = np.array(edge_step)
         if edge_step.ndim > 1:
             edge_step = edge_step[:, 0]
 
@@ -218,8 +226,8 @@ def norm_and_flatten(
         if flatten is True:
             yflat = ynorm - resid.T
             for i in range(y.shape[0]):
-                yflat[i, :] += resid[ie0[i], i]
-                yflat[i, : ie0[i]] = ynorm[i, : ie0[i]]
+                yflat[i, :] += resid[np.array(ie0)[i], i]
+                yflat[i, : np.array(ie0)[i]] = ynorm[i, : np.array(ie0)[i]]
 
             if yflat.shape != y.shape:
                 yflat = yflat.T
@@ -238,11 +246,7 @@ def pre_edge(
     post_order: int = 2,
     output: Literal["Full"] | None = None,
     mode: Literal["First", "Crop"] = "First",
-) -> tuple[
-    np.ndarray[float] | np.ndarray[np.ndarray[float]] | list[np.ndarray[float]],
-    list[np.ndarray[float]] | None,
-    list[np.ndarray[float]] | None,
-]:
+):
     """
     Perform a pre-edge background subtraction routine on absorption data.
 
@@ -283,6 +287,8 @@ def pre_edge(
         if y.ndim == 1:
             e0_idx = np.where(x >= e0)[0][0]
         if y.ndim > 1:
+            if isinstance(e0, float | int):
+                e0 = [e0]
             e0_idx = [np.where(x >= e0[i])[0][0] for i in range(len(e0))]
 
     if y.ndim == 1:

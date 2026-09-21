@@ -9,9 +9,7 @@ from xas_toolbox.xas.edges.find_edges import get_edge_bounds
 logger = logging.getLogger(__name__)
 
 
-def crop_by_edge(
-    x: np.ndarray, y: np.ndarray
-) -> None | tuple[list | np.ndarray, list | np.ndarray]:
+def crop_by_edge(x: np.ndarray, y: np.ndarray):
     """
     Given a scan with multiple edges detected, split up into separate ones
     for later pre-processing. If only one edge is detected the `x` and `y`
