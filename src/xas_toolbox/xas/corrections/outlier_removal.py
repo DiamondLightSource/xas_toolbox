@@ -91,7 +91,10 @@ def correct_outliers(
         yf = median_filter(y, size=window, axes=0)
         y_corrected = np.zeros_like(y)
         for i in range(y.shape[0]):
-            startstop = _get_start_stop(outliers[i], np.diff(outliers[i]), min_spacing)
+            out_tmp = outliers[i]
+            if isinstance(out_tmp, int):
+                out_tmp = np.array(out_tmp)
+            startstop = _get_start_stop(out_tmp, np.diff(outliers[i]), min_spacing)
             _y_corrected = fit_weighted_regions(y[i, :], startstop, yf[i, :], pad)
             y_corrected[i, :] = _y_corrected
 
