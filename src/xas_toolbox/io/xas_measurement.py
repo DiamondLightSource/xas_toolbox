@@ -8,7 +8,7 @@ Goals are:
 
 import logging
 from collections.abc import Callable
-from typing import Any, Literal
+from typing import Literal
 
 import numpy as np
 
@@ -57,7 +57,10 @@ class XasMeasurement:
 
     def __init__(
         self,
-        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any],
+        get_value: Callable[
+            [ScanData | ScanMeta | ElementMeta | str],
+            str | np.ndarray | int | float | list,
+        ],
         mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """
@@ -105,7 +108,7 @@ class XasMeasurement:
         self.set_mode(get_value, mode)
 
     @property
-    def energy(self) -> None:
+    def energy(self) -> np.ndarray:
         """
         Set energy !!!
         """
@@ -121,7 +124,7 @@ class XasMeasurement:
         self._energy = energy
 
     @property
-    def mu(self) -> None:
+    def mu(self) -> np.ndarray:
         """
         Set mu !
         """
@@ -137,7 +140,10 @@ class XasMeasurement:
 
     def set_mode(
         self,
-        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any],
+        get_value: Callable[
+            [ScanData | ScanMeta | ElementMeta | str],
+            str | np.ndarray | int | float | list,
+        ],
         mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """
