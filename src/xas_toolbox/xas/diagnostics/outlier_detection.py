@@ -26,8 +26,8 @@ def gesd_outlier_detection(
     y: np.ndarray, filter_size: int, p: float = 0.05, no_outs: int = 50
 ):
     """
-    Using the generalized extreme student deviate test, identify potential outlier \
-        points in an array.
+    Using the generalized extreme student deviate test, identify\
+          potential outlier points in an array.
 
     Arguments:
         y (np.ndarray): Data to peform outlier test on.
@@ -49,6 +49,8 @@ def gesd_outlier_detection(
     if y.ndim == 1:
         ydiff = y - median_filter(y, filter_size)
 
+        where_out = []
+
         for i in range(1, no_outs + 1):
             _mean, _std = np.nanmean(ydiff), np.nanstd(ydiff)
             pos = np.nanargmax(np.abs(ydiff - _mean))
@@ -63,9 +65,10 @@ def gesd_outlier_detection(
         ydiff = y - np.apply_along_axis(
             partial(median_filter, size=filter_size), axis=1, arr=y
         )
-
-        outlier_points: list[np.ndarray] = []
+        where_out = []
+        outlier_points = []
         for k in range(ydiff.shape[0]):
+            where_out_tmp = []
             diff = ydiff[k, :]
             for i in range(1, no_outs + 1):
                 _mean, _std = np.nanmean(diff), np.nanstd(diff)
@@ -77,7 +80,7 @@ def gesd_outlier_detection(
                 diff[pos] = np.nan
                 where_out_tmp = np.sort(np.arange(0, diff.size)[np.isnan(diff)])
                 outlier_idx = np.array(where_out_tmp).flatten()
-                list(outlier_points).append(outlier_idx)
+                outlier_points.append(outlier_idx)
 
     return outlier_points
 
@@ -171,12 +174,12 @@ def detect_outlier_scans(y: np.ndarray, scaling: float = 3):
 
     Arguments:
         y (np.ndarray): Stacked absorption data.
-        scaling (float, optional): Tolerance factor for outlier scans (larger = higher \
-            tolerance).
+        scaling (float, optional): Tolerance factor for outlier scans (larger = higher\
+              tolerance).
 
     Returns:
-        out_pos (np.ndarray | None): Scan numbers for outliers (`None` if no outliers\
-              found).
+        out_pos (np.ndarray | None): Scan numbers for outliers\
+              (`None` if no outliers found).
     """
     y_n = (y.T - y.mean(axis=1)) / y.std(axis=1).T
     y_med = np.median(y_n, axis=0)
