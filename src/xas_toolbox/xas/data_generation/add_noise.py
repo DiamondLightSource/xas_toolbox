@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 from xas_toolbox.xas.edges import calc_e0
@@ -5,14 +7,14 @@ from xas_toolbox.xas.edges import calc_e0
 _rng = np.random.default_rng(13)
 
 
-def _get_bounds(x: np.ndarray, e0: float | list) -> list[tuple[int, int]]:
+def _get_bounds(x: np.ndarray, e0: float | list | np.ndarray):
     """
     Get approximate upper and lower bounds for adding noise.
     """
     if isinstance(e0, float):
         e0 = [e0]
 
-    bounds = []
+    bounds: list[Any] = []
     lo = 0
     bounds = []
 
@@ -33,8 +35,8 @@ def add_gaussian_noise(
     y: np.ndarray,
     stdev: float,
     mean: float = 0,
-    e0: float | list | np.ndarray = None,
-) -> np.ndarray:
+    e0: float | list | np.ndarray | None = None,
+):
     """
     Add random Gaussian noise to xas data. <br>
     `x` needs to be provided along with `y` so that noise is not added
@@ -72,7 +74,7 @@ def add_gaussian_noise(
     return out
 
 
-def add_poisson_noise(y: np.ndarray, freq: float, amp: float) -> np.ndarray:
+def add_poisson_noise(y: np.ndarray, freq: float, amp: float):
     """
     Add Poisson noise to data.
 
