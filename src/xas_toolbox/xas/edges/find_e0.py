@@ -13,9 +13,7 @@ from xas_toolbox.utils.xray import _edges
 logger = logging.getLogger(__name__)
 
 
-def calc_e0(
-    x: np.ndarray, y: np.ndarray, sigma: float = 5
-) -> tuple[list | float, int | np.ndarray[int], int | list[int]]:
+def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
     """
     Find all values of energy in which a scan has an edge jump.
 
@@ -83,7 +81,7 @@ def edge_from_symbol(x: np.ndarray, y: np.ndarray, symbol: str) -> str:
 
 def compare_e0s(
     x: np.ndarray, y: np.ndarray, symbol: str | None = None, edge: str | None = None
-) -> tuple[float, float]:
+):
     """
     Get a tabulated e0 value from either sample metadata for absorbing atom + edge
     or guess these values.
@@ -117,10 +115,13 @@ def compare_e0s(
 
 def _filter_edge_coords(
     coords: np.ndarray | list, energy: np.ndarray, min_spacing: int
-) -> np.ndarray:
+):
     """
     Filter a list of points by a minimum spacing in energy and return average
     value between each new cluster.
+
+    Returns:
+        edge_coords (np.ndarray[int]): Array of filtered edge coordinates.
     """
     if len(coords) == 1:
         return coords
