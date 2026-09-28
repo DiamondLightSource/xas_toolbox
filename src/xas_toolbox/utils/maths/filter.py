@@ -1,6 +1,6 @@
 from typing import Literal
 
-import numpy as np
+import numpy as np  # type ignore
 
 round_n = lambda a, n: np.array([round(x, n) for x in a])  # noqa: E731
 
