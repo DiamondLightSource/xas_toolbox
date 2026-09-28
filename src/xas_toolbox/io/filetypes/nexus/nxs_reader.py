@@ -45,6 +45,14 @@ class NxsReader:
 
         self.path = path
 
+        self.elementMeta: dict[str, str | list[str] | None]
+        self.scanMeta: dict[str, str | list[str] | None | Path | list[Path]]
+        self.transParams: dict[str, str | list[str] | None]
+        self.fluorParams: dict[str, str | list[str] | None]
+        self.mcaParams: dict[str, str | list[str] | None]
+        self.monoParams: dict[str, str | list[str] | None]
+        self.referParams: dict[str, str | list[str] | None]
+
         self.scanMeta = {
             "start_time": "entry1/start_time",
             "end_time": "entry1/end_time",
@@ -89,7 +97,7 @@ class NxsReader:
                         break
         return det
 
-    def _get_scan_data(self, val: ScanData) -> np.ndarray | None:
+    def _get_scan_data(self, val: str):
         """
         Get a value from the file if it matches any of the values in `ScanData`.<br>
         This is to be used for numeric data in the file (i.e. not metadata).
@@ -116,7 +124,7 @@ class NxsReader:
 
         return out
 
-    def _get_scan_meta(self, val: ScanMeta) -> str | list:
+    def _get_scan_meta(self, val: str):
         """
         Get a requested value from the file if it's classed as
         scan-metadata (i.e. `start_time`, `end_time` or
@@ -139,7 +147,7 @@ class NxsReader:
                 out = f[_path][...].astype("T")
             else:
                 logger.warning(f"{val} not found in file")
-        if hasattr(out, "ndim"):
+        if hasattr(out, "ndim") and out is not None:
             if out.ndim == 0:
                 out = str(out)  # single values are returned as string
                 if out == "":
@@ -150,7 +158,7 @@ class NxsReader:
                     out = None  # repetition files need to be split by \n
         return out
 
-    def _get_element_meta(self, val: ElementMeta) -> str | None:
+    def _get_element_meta(self, val: str):
         """
         Get requested ElementMeta item from file. <br>
         This will need to be different for i20-1 files.
@@ -162,8 +170,8 @@ class NxsReader:
             return
 
         parser = etree.XMLParser(recover=True)
-        _path = self.elementMeta[val][0]
-        xml_name = self.elementMeta[val][-1]
+        _path: str = self.elementMeta[val][0]
+        xml_name: str = self.elementMeta[val][-1]
 
         with h5py.File(self.path, "r") as f:
             if _path not in f.keys():
@@ -174,9 +182,7 @@ class NxsReader:
 
         return out
 
-    def get_value(
-        self, val: ScanData | ElementMeta | ScanMeta
-    ) -> np.ndarray | str | list | None:
+    def get_value(self, val: str) -> np.ndarray | str | list | None | ValueError:
 
         if val in ScanData.__members__.keys():
             return self._get_scan_data(val)
@@ -190,7 +196,7 @@ class NxsReader:
         else:
             return ValueError("Value not a valid XAS parameter.")
 
-    def _get_dims(self, val: ScanData) -> tuple[int]:
+    def _get_dims(self, val: str):
         """
         Get the shape of a requested value.
 
@@ -212,4 +218,4 @@ class NxsReader:
                 return nshape
             else:
                 logger.info(f"{val} not found in {self.path}")
-                return
+                return None

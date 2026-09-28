@@ -5,11 +5,8 @@ Reader for ASCII (.dat) files.
 import logging
 import re
 from pathlib import Path
-from typing import Any
 
 import numpy as np
-
-from xas_toolbox.utils.scan_data import ScanData
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +71,7 @@ class AsciiReader:
 
             self.__setattr__(name, data[i, :])
 
-    def get_value(self, val: ScanData | str) -> Any:
+    def get_value(self, val: str):
         """
         If value present in column names then it is returned.
 
@@ -91,7 +88,7 @@ class AsciiReader:
         else:
             return getattr(self, val)
 
-    def _get_dims(self, val: ScanData) -> tuple | None:
+    def _get_dims(self, val: str) -> tuple | None:
         """
         Get the shape of a requested value.
 
@@ -106,4 +103,4 @@ class AsciiReader:
         if out is not None:
             return out.shape
         else:
-            return
+            return None

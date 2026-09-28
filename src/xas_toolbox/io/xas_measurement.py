@@ -57,8 +57,8 @@ class XasMeasurement:
 
     def __init__(
         self,
-        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any],
-        mode: Literal["fluorescence", "transmission"] = None,
+        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any | None],
+        mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """
         Create an `XasMeasurement` object.
@@ -88,24 +88,23 @@ class XasMeasurement:
             ```
         """
 
-        self._mu = None
-        self._energy = None
+        self._mu: np.ndarray | None = None
+        self._energy: np.ndarray | None = None
 
         self.mode = mode
 
         self._get_value = get_value
 
         self.meta = XasMeta(get_value)
-
-        self.auxData = None
-        self.transData = None
-        self.fluorData = None
-        self.refData = None
-        self.mcaData = None
+        self.auxData: AuxMeasurement | None = None
+        self.transData: TransMeasurement | None = None
+        self.fluorData: FluorMeasurement | None = None
+        self.refData: RefMeasurement | None = None
+        self.mcaData: McaMeasurement | None = None
         self.set_mode(get_value, mode)
 
     @property
-    def energy(self) -> None:
+    def energy(self):
         """
         Set energy !!!
         """
@@ -121,7 +120,7 @@ class XasMeasurement:
         self._energy = energy
 
     @property
-    def mu(self) -> None:
+    def mu(self):
         """
         Set mu !
         """
@@ -137,8 +136,8 @@ class XasMeasurement:
 
     def set_mode(
         self,
-        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any],
-        mode: Literal["fluorescence", "transmission"] = None,
+        get_value: Callable[[ScanData | ScanMeta | ElementMeta | str], Any | None],
+        mode: Literal["fluorescence", "transmission"] | None = None,
     ):
         """
         Determine what the principal values to go in `self.energy, self.mu` are.

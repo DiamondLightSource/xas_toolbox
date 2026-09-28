@@ -1,6 +1,4 @@
-from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
 import h5py
 
@@ -12,7 +10,6 @@ from xas_toolbox.io.filetypes import (
     LegacyB18Reader,
     XdiReader,
 )
-from xas_toolbox.utils.scan_data import ScanData
 
 
 def _find_instrument(path: Path) -> str:
@@ -29,7 +26,7 @@ def _find_instrument(path: Path) -> str:
 
 def _load_nxs(
     path: Path,
-) -> tuple[Callable[[ScanData], Any], B18Reader | I20Reader | I201Reader]:
+):
     """
     For a nexus file, set the correct reader class (from `beamlines`)
     and get function to be used in making the `XasMeasurement` object.
@@ -43,6 +40,7 @@ def _load_nxs(
             file.
             reader (B18Reader | I20Reader | I20_1Reader): File path/data storage object.
     """
+    reader: LegacyB18Reader | B18Reader | I201Reader | I20Reader
     instrument = _find_instrument(path)
     if instrument == "['b18']":
         reader = LegacyB18Reader(path)
@@ -60,7 +58,7 @@ def _load_nxs(
     return get_data_fn, reader
 
 
-def _load_misc(path: Path) -> tuple[Callable[[ScanData], Any], XdiReader]:
+def _load_misc(path: Path):
     """
     Return correct data store object and getter function for
     xdi/dat files.
@@ -74,6 +72,7 @@ def _load_misc(path: Path) -> tuple[Callable[[ScanData], Any], XdiReader]:
             file.
             reader (XdiReader): File path/data storage object.
     """
+    reader: AsciiReader | XdiReader
     if path.suffix == ".dat":
         reader = AsciiReader(path)
     elif path.suffix == ".xdi":
