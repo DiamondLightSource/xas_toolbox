@@ -15,7 +15,7 @@ description = "A python package for processing and analysis of X-ray spectroscop
 dependencies = [
     "h5py==3.13.0",
     "hdf5plugin==5.1.0",
-    "matplotlib==3.10.1",
+    "matplotlib==3.11.2",
     "xraylarch==2025.2.0",
     "scipy==1.15.2",
     "lxml==6.0.2",
