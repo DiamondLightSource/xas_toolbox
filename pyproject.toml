@@ -16,7 +16,7 @@ dependencies = [
     "h5py==3.13.0",
     "hdf5plugin==5.1.0",
     "matplotlib==3.10.1",
-    "xraylarch==2025.2.0",
+    "xraylarch==2025.3.0",
     "scipy==1.15.2",
     "lxml==6.0.2",
     "xraylib==4.2.1",
