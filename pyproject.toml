@@ -19,7 +19,7 @@ dependencies = [
     "xraylarch==2025.2.0",
     "scipy==1.15.2",
     "lxml==6.0.2",
-    "xraylib==4.2.1",
+    "xraylib==4.3.0",
     "numpy>=2.4.6",
 ]
 dynamic = ["version"]
