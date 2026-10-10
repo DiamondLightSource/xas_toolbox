@@ -14,7 +14,7 @@ classifiers = [
 description = "A python package for processing and analysis of X-ray spectroscopy data"
 dependencies = [
     "h5py==3.13.0",
-    "hdf5plugin==5.1.0",
+    "hdf5plugin==7.1.0",
     "matplotlib==3.10.1",
     "xraylarch==2025.2.0",
     "scipy==1.15.2",
