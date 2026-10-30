@@ -10,6 +10,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 description = "A python package for processing and analysis of X-ray spectroscopy data"
 dependencies = [
@@ -29,7 +30,6 @@ requires-python = ">=3.11"
 
 [dependency-groups]
 dev = [
-    "copier",
     "mypy",
     "pre-commit",
     "pytest",
@@ -48,6 +48,10 @@ GitHub = "https://github.com/DiamondLightSource/xas_toolbox"
 [[project.authors]] # Further authors may be added by duplicating this section
 email = "l.haddad@diamond.ac.uk"
 name = "Lucy Haddad"
+
+[tool.uv]
+# Minimum uv to fix eMudhra CA cert incident (see discuss.python.org/t/109576)
+required-version = ">=0.13.5"
 
 [tool.setuptools_scm]
 version_file = "src/xas_toolbox/_version.py"
