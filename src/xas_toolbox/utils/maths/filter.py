@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np  # type ignore
 
@@ -21,7 +21,9 @@ def _remove_negative_gradient(
 
 
 def resize_with_replacement(
-    data: list[np.ndarray], placeholder: float | int = np.nan
+    data: list[np.ndarray[tuple[Any, ...], np.dtype[Any]]]
+    | np.ndarray[tuple[Any, ...], np.dtype[Any]],
+    placeholder: float | int = np.nan,
 ) -> np.ndarray:
     """
     For a list of variable-length arrays resize to
@@ -84,18 +86,18 @@ def normalise_matrix(
         return out
 
 
-def remove_nans(*arrays: np.ndarray) -> list[np.ndarray]:
+def remove_nans(*arrays):
     """
     If a NaN or inf. value exists in one of the arrays
     in the set, remove the point from all of them.
 
     Arguments:
-        *arrays (tuple[np.ndarray]): List of arrays.
+        *arrays: List of arrays.
 
     Returns:
-        arrays (list[np.ndarray]): List of arrays with NaN/inf removed.
+        arrays: List of arrays with NaN/inf removed.
     """
-    arrays = list(arrays)
+
     bad_idxs = [np.where(~np.isfinite(a)) for a in arrays]
     for val in bad_idxs:
         if len(val) == 1:

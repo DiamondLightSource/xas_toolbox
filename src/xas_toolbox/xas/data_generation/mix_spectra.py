@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 
 from xas_toolbox.utils.maths.filter import normalise_matrix, resize_with_replacement
@@ -5,8 +7,9 @@ from xas_toolbox.xas.alignment.align_stack import get_target_energy, interp_stac
 
 
 def mix_scans(
-    profiles: np.ndarray,
-    absorption: list[np.ndarray],
+    profiles: np.ndarray[tuple[Any, ...], np.dtype[Any]],
+    absorption: list[np.ndarray[tuple[Any, ...], np.dtype[Any]]]
+    | np.ndarray[tuple[Any, ...], np.dtype[Any]],
     energy: list[np.ndarray] | np.ndarray,
 ):
     """

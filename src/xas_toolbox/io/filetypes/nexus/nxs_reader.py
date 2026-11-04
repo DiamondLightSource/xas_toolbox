@@ -170,8 +170,8 @@ class NxsReader:
             return
 
         parser = etree.XMLParser(recover=True)
-        _path: str = self.elementMeta[val][0]
-        xml_name: str = self.elementMeta[val][-1]
+        _path: str = self.elementMeta[val][0]  # type: ignore
+        xml_name: str = self.elementMeta[val][-1]  # type: ignore
 
         with h5py.File(self.path, "r") as f:
             if _path not in f.keys():
