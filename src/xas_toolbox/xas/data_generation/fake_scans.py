@@ -1,5 +1,6 @@
 import logging
 from operator import itemgetter
+from typing import Any
 
 import numpy as np
 from xraydb import f2_chantler
@@ -7,6 +8,7 @@ from xraydb.xray import xray_edge
 from xraylib import AtomicNumberToSymbol, CompoundParser
 
 from xas_toolbox.io import XasMeasurement
+from xas_toolbox.utils.scan_data import ElementMeta, ScanData, ScanMeta
 from xas_toolbox.xas.edges import find_edges
 
 from .xafs_signal import make_signal
@@ -264,11 +266,14 @@ def make_fake_spectrum(
         nscans=nscans,
     )
 
-    def _get_fn(valname: str) -> np.ndarray | None:
+    def _get_fn(
+        valname: ScanData | ScanMeta | ElementMeta | str,
+    ) -> np.ndarray[tuple[Any, ...], np.dtype[Any]] | list[Any] | None:
         if valname == "energy":
             return energy
         if valname == "mu" or valname == "mutrans":
             return xafs
+        return None
 
     out = XasMeasurement(get_value=_get_fn, mode="transmission")
     out.energy = energy

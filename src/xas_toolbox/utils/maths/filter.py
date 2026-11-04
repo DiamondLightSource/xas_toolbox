@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np  # type ignore
 
@@ -21,7 +21,9 @@ def _remove_negative_gradient(
 
 
 def resize_with_replacement(
-    data: list[np.ndarray], placeholder: float | int = np.nan
+    data: list[np.ndarray[tuple[Any, ...], np.dtype[Any]]]
+    | np.ndarray[tuple[Any, ...], np.dtype[Any]],
+    placeholder: float | int = np.nan,
 ) -> np.ndarray:
     """
     For a list of variable-length arrays resize to
