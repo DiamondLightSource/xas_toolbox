@@ -132,7 +132,7 @@ def pre_edge_bkg(
                 for i in range(y.shape[0]):
                     # make sure only first edge looked at for stacks.
                     if isinstance(e0_idx[i], np.ndarray):
-                        e0_idx_tmp = e0_idx[i][0]
+                        e0_idx_tmp = e0_idx[i][0]  # type: ignore
                     else:
                         e0_idx_tmp = e0_idx[i]
 
@@ -177,7 +177,7 @@ def norm_and_flatten(
     pre_bkg: np.ndarray,
     post_bkg: np.ndarray,
     edge_step: float | np.ndarray,
-    ie0: int | np.ndarray[int],
+    ie0: int | np.ndarray[tuple[int, ...]],
     flatten: bool = True,
 ):
     """
@@ -331,7 +331,7 @@ def pre_edge(
             x, y, e0, e0_idx, pre_order, post_order
         )
 
-        norm, flat = norm_and_flatten(y, pre_bkg, post_bkg, edge_step, e0_idx)
+        norm, flat = norm_and_flatten(y, pre_bkg, post_bkg, edge_step, e0_idx)  # type: ignore
     if output is not None:
         return norm, flat, edge_step, pre_bkg, post_bkg
 
