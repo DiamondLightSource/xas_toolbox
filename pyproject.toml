@@ -7,6 +7,7 @@ name = "xas-toolbox"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -16,8 +17,8 @@ dependencies = [
     "h5py==3.16.0",
     "hdf5plugin==7.1.0",
     "matplotlib==3.11.2",
-    "xraylarch==2026.3.1",
-    "scipy==1.18.1",
+    "xraylarch>=2025.1.1",
+    "scipy<=1.15.1",
     "lxml==6.1.3",
     "xraylib==4.3.0",
     "numpy>=2.4.6",
@@ -25,7 +26,7 @@ dependencies = [
 dynamic = ["version"]
 license.file = "LICENSE"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 
 [dependency-groups]
 dev = [
