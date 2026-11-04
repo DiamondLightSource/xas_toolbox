@@ -84,18 +84,18 @@ def normalise_matrix(
         return out
 
 
-def remove_nans(*arrays: np.ndarray) -> list[np.ndarray]:
+def remove_nans(*arrays):
     """
     If a NaN or inf. value exists in one of the arrays
     in the set, remove the point from all of them.
 
     Arguments:
-        *arrays (tuple[np.ndarray]): List of arrays.
+        *arrays: List of arrays.
 
     Returns:
-        arrays (list[np.ndarray]): List of arrays with NaN/inf removed.
+        arrays: List of arrays with NaN/inf removed.
     """
-    arrays = list(arrays)
+
     bad_idxs = [np.where(~np.isfinite(a)) for a in arrays]
     for val in bad_idxs:
         if len(val) == 1:
