@@ -1,5 +1,5 @@
 from functools import partial
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 from numpy.linalg import lstsq
@@ -49,7 +49,7 @@ def gesd_outlier_detection(
     if y.ndim == 1:
         ydiff = y - median_filter(y, filter_size)
 
-        where_out = []
+        where_out: list[Any] | np.ndarray[tuple[Any, ...]] = []
 
         for i in range(1, no_outs + 1):
             _mean, _std = np.nanmean(ydiff), np.nanstd(ydiff)
@@ -60,7 +60,9 @@ def gesd_outlier_detection(
                 break
             ydiff[pos] = np.nan
             where_out = np.sort(np.arange(0, ydiff.size)[np.isnan(ydiff)])
-        outlier_points = np.array(where_out, dtype=int).flatten()
+        outlier_points: list[Any] | np.ndarray[tuple[Any, ...]] = np.array(
+            where_out, dtype=int
+        ).flatten()
     else:
         ydiff = y - np.apply_along_axis(
             partial(median_filter, size=filter_size), axis=1, arr=y
@@ -68,7 +70,7 @@ def gesd_outlier_detection(
         where_out = []
         outlier_points = []
         for k in range(ydiff.shape[0]):
-            where_out_tmp = []
+            where_out_tmp: list[Any] | np.ndarray[tuple[Any, ...]] = []
             diff = ydiff[k, :]
             for i in range(1, no_outs + 1):
                 _mean, _std = np.nanmean(diff), np.nanstd(diff)
