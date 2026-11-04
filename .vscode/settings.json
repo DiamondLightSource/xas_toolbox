@@ -11,9 +11,10 @@
     },
     "python-envs.pythonProjects": [
         {
-            "path": "src/xas_toolbox",
+            "path": "ignore/xas_toolbox_old",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
         }
     ],
+    "python.analysis.typeCheckingMode": "off",
 }
