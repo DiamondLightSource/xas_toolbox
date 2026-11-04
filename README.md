@@ -7,9 +7,19 @@
 
 A python package for processing and analysis of X-ray spectroscopy data with a focus on stacks of time-resolved measurements.
 
+<<<<<<< before updating
 Source          | <https://github.com/DiamondLightSource/xas_toolbox>
 :---:           | :---:
 Releases        | <https://github.com/DiamondLightSource/xas_toolbox/releases>
+=======
+This is where you should write a short paragraph that describes what your module does,
+how it does it, and why people should use it.
+
+What            | Where
+:---:           | :---:
+Source          | <https://github.com/DiamondLightSource/xas-toolbox>
+Releases        | <https://github.com/DiamondLightSource/xas-toolbox/releases>
+>>>>>>> after updating
 
 More examples to follow.
 
