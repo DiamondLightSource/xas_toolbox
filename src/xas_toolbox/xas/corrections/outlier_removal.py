@@ -4,7 +4,7 @@ import numpy as np
 from scipy.ndimage import median_filter
 from scipy.signal.windows import tukey
 
-from xas_toolbox.utils.fitting import median_poly_fit
+from xas_toolbox.fitting import median_poly_fit
 from xas_toolbox.utils.maths.start_stop import _get_start_stop
 
 
