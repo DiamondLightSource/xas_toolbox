@@ -35,7 +35,7 @@ class AuxMeasurement:
         self._time = None
 
     @property
-    def i0(self) -> None:
+    def i0(self) -> Any:
         """
         Set `_i0` internally if no initial value. <br>
             Will return `_i0` if it's already been set.
@@ -51,7 +51,7 @@ class AuxMeasurement:
         self._i0 = i0
 
     @property
-    def energy(self) -> None:
+    def energy(self) -> Any:
         """
         Set `_energy` internally if no initial value. <br>
             Will return `_energy` if it's already been set.
@@ -67,7 +67,7 @@ class AuxMeasurement:
         self._energy = energy
 
     @property
-    def angle(self) -> None:
+    def angle(self) -> Any:
         """
         Set `_angle` internally if no initial value. <br>
             Will return `_angle` if it's already been set.
@@ -83,7 +83,7 @@ class AuxMeasurement:
         self._angle = angle
 
     @property
-    def time(self) -> None:
+    def time(self) -> Any:
         """
         Set `_time` internally if no initial value. <br>
         Will return `_time` it it's already been set.
@@ -116,7 +116,7 @@ class FluorMeasurement:
         self._mufluor = None
 
     @property
-    def ifluor(self) -> None:
+    def ifluor(self) -> Any:
         """
         Set `_ifluor` internally if no initial value. <br>
             Will return `_ifluor` if it's already been set.
@@ -132,7 +132,7 @@ class FluorMeasurement:
         self._ifluor = ifluor
 
     @property
-    def mufluor(self) -> None:
+    def mufluor(self) -> Any:
         """
         Set `_mufluor` internally if no initial value. <br>
             Will return `_mufluor` if it's already been set.
@@ -165,7 +165,7 @@ class TransMeasurement:
         self._mutrans = None
 
     @property
-    def itrans(self) -> None:
+    def itrans(self) -> Any:
         """
         Set `_itrans` internally if no initial value. <br>
             Will return `_itrans` if it's already been set.
@@ -181,7 +181,7 @@ class TransMeasurement:
         self._itrans = itrans
 
     @property
-    def mutrans(self) -> None:
+    def mutrans(self) -> Any:
         """
         Set `_mutrans` internally if no initial value. <br>
             Will return `_mutrans` if it's already been set.
@@ -214,7 +214,7 @@ class RefMeasurement:
         self._murefer = None
 
     @property
-    def irefer(self) -> None:
+    def irefer(self) -> Any:
         """
         Set `_irefer` internally if no initial value. <br>
             Will return `_irefer` if it's already been set.
@@ -230,7 +230,7 @@ class RefMeasurement:
         self._irefer = irefer
 
     @property
-    def murefer(self) -> None:
+    def murefer(self) -> Any:
         """
         Set `_murefer` internally if no initial value. <br>
             Will return `_murefer` if it's already been set.
@@ -265,7 +265,7 @@ class McaMeasurement:
         self._raw_scaler_in_window = None
 
     @property
-    def dtc_factors(self) -> None:
+    def dtc_factors(self) -> Any:
         """
         Set `_dtc_factors` internally if no initial value. <br>
             Will return `_dtc_factors` if it's already been set.
@@ -281,7 +281,7 @@ class McaMeasurement:
         self._dtc_factors = dtc_factors
 
     @property
-    def raw_scaler_in_window(self) -> None:
+    def raw_scaler_in_window(self) -> Any:
         """
         Set `_raw_scaler_in_window` internally if no initial value. <br>
             Will return `_raw_scaler_in_window` if it's already been set.
@@ -297,7 +297,7 @@ class McaMeasurement:
         self._raw_scaler_in_window = raw_scaler_in_window
 
     @property
-    def mcas(self) -> None:
+    def mcas(self) -> Any:
         """
         Set `_mcas` internally if no initial value. <br>
             Will return `_mcas` if it's already been set.
@@ -342,7 +342,7 @@ class XasMeta:
         self._ref_edge = None
 
     @property
-    def path(self) -> None:
+    def path(self) -> Any:
         """
         Set `_path` internally if no initial value. <br>
             Will return `_path` if it's already been set.
@@ -358,7 +358,7 @@ class XasMeta:
         self._path = path
 
     @property
-    def repetition_files(self) -> None:
+    def repetition_files(self) -> Any:
         """
         Set `_repetition_files` internally if no initial value. <br>
             Will return `_repetition_files` if it's already been set.
@@ -374,7 +374,7 @@ class XasMeta:
         self._repetition_files = repetition_files
 
     @property
-    def start_time(self) -> None:
+    def start_time(self) -> Any:
         """
         Set `_start_time` internally if no initial value. <br>
             Will return `_start_time` if it's already been set.
@@ -390,7 +390,7 @@ class XasMeta:
         self._start_time = start_time
 
     @property
-    def end_time(self) -> None:
+    def end_time(self) -> Any:
         """
         Set `_end_time` internally if no initial value. <br>
             Will return `_end_time` if it's already been set.
@@ -406,7 +406,7 @@ class XasMeta:
         self._end_time = end_time
 
     @property
-    def symbol(self) -> None:
+    def symbol(self) -> Any:
         """
         Set `_symbol` internally if no initial value. <br>
             Will return `_symbol` if it's already been set.
@@ -423,7 +423,7 @@ class XasMeta:
             raise ValueError("symbol must be str.")
 
     @property
-    def ref_symbol(self) -> None:
+    def ref_symbol(self) -> Any:
         """
         Set `_ref_symbol` internally if no initial value. <br>
             Will return `_ref_symbol` if it's already been set.
@@ -440,7 +440,7 @@ class XasMeta:
             raise ValueError("ref_symbol must be str.")
 
     @property
-    def edge(self) -> None:
+    def edge(self) -> Any:
         """
         Set `_edge` internally if no initial value. <br>
             Will return `_edge` if it's already been set.
@@ -457,7 +457,7 @@ class XasMeta:
             raise ValueError("edge must be str.")
 
     @property
-    def ref_edge(self) -> None:
+    def ref_edge(self) -> Any:
         """
         Set `_ref_edge` internally if no initial value. <br>
             Will return `_ref_edge` if it's already been set.

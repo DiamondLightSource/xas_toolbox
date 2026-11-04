@@ -98,5 +98,5 @@ def align_scan(scan: XasMeasurement) -> XasMeasurement:
     scan_out.energy = x_out
     if scan_out.auxData:
         scan_out.auxData.energy = x_out
-    scan_out.meta.energy_shift = delta_x
+    scan_out.meta.energy_shift = delta_x  # type: ignore
     return scan_out
