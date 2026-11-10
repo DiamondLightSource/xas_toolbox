@@ -33,16 +33,18 @@ def calc_overlap_score(
 def check_energy_overlap(
     data: XasMeasurement | tuple[_Array1dFloat, _ArrayNdFloat],
     components: list[XasMeasurement | tuple[_Array1dFloat, _Array1dFloat]] | None,
+    tol: float = 0.3,
 ):
     """
     Filter a set of data and components to find a common energy range.
-    Data that has less than 30% similarity with the data's energy range will be
-    removed. <br>
+    Data that has less than 30% (default) similarity with the data's energy range will
+    be removed. <br/>
     If the experimental data spans the reference data it is kept in the set.
 
     Arguments:
         data: Experimental data.
         components: List of reference datasets.
+        tol (Optional): Tolerance for removing components. Higher = lower tolerance.
     Returns:
         tuple: tuple containing:
             data: Same data from arguments.
@@ -53,7 +55,6 @@ def check_energy_overlap(
     else:
         x = data.energy
     espace_data = np.linspace(x[0], x[-1], 10)
-    espace_data = np.array([round(n, -2) for n in espace_data])
 
     if components is not None:
         flagged_components = []
@@ -64,9 +65,8 @@ def check_energy_overlap(
             else:
                 x = tmp.energy
             espace = np.linspace(x[0], x[-1], 10)
-            espace = np.array([round(n, 2) for n in espace])
             score = calc_overlap_score(espace_data, espace)
-            if score < 0.3:
+            if score < tol:
                 if espace[0] < espace_data[0] and espace[-1] > espace_data[-1]:
                     continue
                 else:
@@ -101,7 +101,7 @@ def get_energy_ranges(
 
     """
     min_e, max_e = [], []
-    if data:
+    if data is not None:
         if isinstance(data, np.ndarray):
             min_e.append(data[0])
             max_e.append(data[-1])
@@ -158,7 +158,7 @@ def crop_fit_data(
             y = data.mu
         xout, yout = crop_xy(x, y, bounds, mode="value")
         data_out = {"x": xout, "y": yout}
-        npoints.append(bounds[-1] - bounds[0])
+        npoints.append(len(xout))
     else:
         data_out = None
 
@@ -171,14 +171,13 @@ def crop_fit_data(
             else:
                 x = c.energy
                 y = c.mu
-
             xout, yout = crop_xy(x, y, bounds, mode="value")
             comps_out.append({"x": xout, "y": yout})
-            npoints.append(bounds[-1] - bounds[0])
+            npoints.append(len(xout))
     else:
         comps_out = None
 
-    target_length: int = np.min(npoints)
+    target_length = int(np.min(npoints))
     return data_out, comps_out, target_length
 
 
@@ -211,12 +210,17 @@ def interpolate_fit_data(
         Ebounds = get_energy_ranges(data, components)  # noqa: N806
 
     dtmp, ctmp, tl = crop_fit_data(data, components, Ebounds)
+
     for i in range(len(ctmp)):
-        x, y = interpolate_with_bounds(ctmp[i]["x"], ctmp[i]["y"], tl, Ebounds)
+        x, y = interpolate_with_bounds(
+            x=ctmp[i]["x"], y=ctmp[i]["y"], npoints=tl, bounds=Ebounds
+        )
         ctmp[i]["x"] = x
         ctmp[i]["y"] = y
     if data is not None:
-        x, y = interpolate_with_bounds(dtmp["x"], dtmp["y"], tl, Ebounds)
+        x, y = interpolate_with_bounds(
+            x=dtmp["x"], y=dtmp["y"], npoints=tl, bounds=Ebounds
+        )
         dtmp["x"] = x
         dtmp["y"] = y
 
