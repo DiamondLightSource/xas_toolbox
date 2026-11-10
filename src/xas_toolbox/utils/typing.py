@@ -1,9 +1,8 @@
-from typing import Any, TypedDict
+from typing import Annotated, Any, TypedDict
 
 from numpy import complex128, dtype, float64, int_, ndarray, uint
 
 # AliasTypes for 1d and nd arrays of float/ints.
-
 
 _Array1dFloat = ndarray[tuple[Any], dtype[float64]]
 _Array1dInt = ndarray[tuple[Any], dtype[uint | int_]]
@@ -18,6 +17,9 @@ _ArrayNdComplex = ndarray[tuple[Any, ...], dtype[complex128]]
 _ArrayNd = _ArrayNdFloat | _ArrayNdInt | _ArrayNdComplex
 
 
+# for fit filtering routines
+
+
 class _XYdict(TypedDict):
     x: _Array1d
     y: _ArrayNd | _Array1d
@@ -26,3 +28,17 @@ class _XYdict(TypedDict):
 class _XYdictFloat(TypedDict):
     x: _Array1dFloat
     y: _ArrayNdFloat | _Array1dFloat
+
+
+# for nnls results
+class _SingleNNLSResult(TypedDict):
+    fitted_data: Annotated[_ArrayNdFloat, "Array of best-fit y data."]
+    fitted_values: Annotated[
+        dict[str, float | int],
+        "dict of component name: fitted \
+                             profile pairs.",
+    ]
+
+
+class _NNLSResult1D(TypedDict, _SingleNNLSResult):
+    fit_data: Annotated[_XYdict, "Dict of experimental fit data (x, y)."]

@@ -125,14 +125,14 @@ def test_nnls_1d_spectrum():
             data=data, components=ref_data, component_names=formulae, filter=False
         )
         assert len(concentrations) == len(formulae)
-        assert list(solution.keys()) == ["fit data", "fitted values", "fitted data"]
+        assert list(solution.keys()) == ["fit_data", "fitted_values", "fitted_data"]
         assert round(concentrations[i], 2) > 0.99
 
         solution, concentrations = nnls_fit(
             data=data, components=ref_data, component_names=formulae, filter=True
         )
         assert len(concentrations) <= len(formulae)
-        assert list(solution.keys()) == ["fit data", "fitted values", "fitted data"]
+        assert list(solution.keys()) == ["fit_data", "fitted_values", "fitted_data"]
 
 
 def test_nnls_nd():

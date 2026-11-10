@@ -10,6 +10,7 @@ from xas_toolbox.utils.typing import (
     _Array1dInt,
     _ArrayNdFloat,
     _ArrayNdInt,
+    _NNLSResult1D,
 )
 
 from .fit_filters import check_energy_overlap, interpolate_fit_data
@@ -86,7 +87,11 @@ def filter_nnls_solution_1d(
     refdata: _ArrayNdFloat,
     filter: bool = True,
 ):
-    solution: dict[str, Any] = {"fit data": {"y": ydata, "x": xdata}}
+    """
+    Filter the solution from single-scan nnls fitting to discard components
+    which have profiles less than 1/100.
+    """
+    solution: _NNLSResult1D = {"fit_data": {"y": ydata, "x": xdata}}  # type: ignore
 
     if filter is True:
         rounded = [round(c, 2) for c in concentrations]  # less than 1/100th.
@@ -101,16 +106,17 @@ def filter_nnls_solution_1d(
 
         concs_new = np.array(concs_new)
 
-        solution["fitted values"] = (
-            {names_new[n]: concs_new[n] for n in range(len(names_new))},
-        )
-        solution["fitted data"] = fitdata
+        solution["fitted_values"] = {
+            names_new[n]: concs_new[n] for n in range(len(names_new))
+        }
+
+        solution["fitted_data"] = np.array(fitdata)
         return solution, concs_new
     else:
-        solution["fitted values"] = {
+        solution["fitted_values"] = {
             component_names[n]: concentrations[n] for n in range(len(component_names))
         }
-        solution["fitted data"] = concentrations * refdata
+        solution["fitted_data"] = concentrations * refdata
 
         return solution, concentrations
 
@@ -125,7 +131,7 @@ def filter_nnls_solution_nd(
     """
     Filter nnls solution and make it look a bit more human-readable.
     """
-    solution: dict[str, Any] = {"fit data": {"y": ydata, "x": xdata}}
+    solution: dict[str, Any] = {"fit_data": {"y": ydata, "x": xdata}}
     concentrations = concentrations.T
     concs_new, names_out = [], []
     for i in range(concentrations.shape[0]):
@@ -140,7 +146,7 @@ def filter_nnls_solution_nd(
     for i in range(concentrations.shape[1]):
         yfit = np.sum(concentrations[:, i] * refdata, axis=1)
         solution[f"time {i}"] = {
-            "fitted values": {
+            "fitted_values": {
                 names_out[n]: concs_new[i][n] for n in range(len(names_out))
             },
             "fitted_data": yfit,
