@@ -5,7 +5,12 @@ import numpy as np
 from scipy.optimize import nnls
 
 from xas_toolbox.io import XasMeasurement
-from xas_toolbox.utils.typing import _Array1dFloat, _ArrayNdFloat, _ArrayNdInt
+from xas_toolbox.utils.typing import (
+    _Array1dFloat,
+    _Array1dInt,
+    _ArrayNdFloat,
+    _ArrayNdInt,
+)
 
 from .fit_filters import check_energy_overlap, interpolate_fit_data
 
@@ -16,25 +21,31 @@ def nnls_fit(
     data: XasMeasurement | tuple[_Array1dFloat, _ArrayNdFloat],
     components: list[XasMeasurement | tuple[_Array1dFloat, _Array1dFloat]],
     component_names: list[str] | None = None,
+    filter: bool = False,
 ):
     """
     Perform non-negative least squares fit of components to data.
     """
+
     data_tmp, comps_tmp = check_energy_overlap(data, components)
     data_tmp, comps_tmp = interpolate_fit_data(data_tmp, comps_tmp)
     ncomp = len(comps_tmp)
     x = data_tmp["x"]
     y = data_tmp["y"]
+
     references = np.empty((len(x), ncomp))
     if component_names is None:
         component_names = [f"component {i + 1}" for i in range(ncomp)]
-
     for i in range(ncomp):
         references[:, i] = comps_tmp[i]["y"]
     if y.ndim == 1:
         concs: np.ndarray = nnls(references, y)[0]
         concs /= np.sum(concs)
         solution = {component_names[i]: concs[i] for i in range(ncomp)}
+
+        solution, concs = filter_nnls_solution_1d(
+            component_names, concs, x, y, references, filter
+        )
 
     else:
         solution = {}
@@ -45,7 +56,11 @@ def nnls_fit(
                 component_names[i]: soln[i] for i in range(ncomp)
             }
         concs = group_nnls_solution(solution)
-        solution, concs = filter_nnls_solution(component_names, concs, y, x, references)
+        if filter is True:
+            solution, concs = filter_nnls_solution_nd(
+                component_names, concs, y, x, references
+            )
+
     return solution, concs
 
 
@@ -63,7 +78,44 @@ def group_nnls_solution(solution: dict):
     return grouped
 
 
-def filter_nnls_solution(
+def filter_nnls_solution_1d(
+    component_names: list[str],
+    concentrations: _Array1dInt | _Array1dFloat,
+    xdata: _Array1dFloat,
+    ydata: _Array1dFloat,
+    refdata: _ArrayNdFloat,
+    filter: bool = True,
+):
+    solution: dict[str, Any] = {"fit data": {"y": ydata, "x": xdata}}
+
+    if filter is True:
+        rounded = [round(c, 2) for c in concentrations]  # less than 1/100th.
+        concs_new, names_new = [], []
+
+        for i in range(len(rounded)):
+            if rounded[i] > 0:
+                concs_new.append(rounded[i])
+                names_new.append(component_names[i])
+
+        fitdata = concs_new * refdata
+
+        concs_new = np.array(concs_new)
+
+        solution["fitted values"] = (
+            {names_new[n]: concs_new[n] for n in range(len(names_new))},
+        )
+        solution["fitted data"] = fitdata
+        return solution, concs_new
+    else:
+        solution["fitted values"] = {
+            component_names[n]: concentrations[n] for n in range(len(component_names))
+        }
+        solution["fitted data"] = concentrations * refdata
+
+        return solution, concentrations
+
+
+def filter_nnls_solution_nd(
     component_names: list[str],
     concentrations: _ArrayNdFloat | _ArrayNdInt,
     ydata: _ArrayNdFloat,

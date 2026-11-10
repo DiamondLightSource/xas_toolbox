@@ -212,13 +212,13 @@ def interpolate_fit_data(
     dtmp, ctmp, tl = crop_fit_data(data, components, Ebounds)
 
     for i in range(len(ctmp)):
-        x, y = interpolate_with_bounds(
+        y, x = interpolate_with_bounds(
             x=ctmp[i]["x"], y=ctmp[i]["y"], npoints=tl, bounds=Ebounds
         )
         ctmp[i]["x"] = x
         ctmp[i]["y"] = y
     if data is not None:
-        x, y = interpolate_with_bounds(
+        y, x = interpolate_with_bounds(
             x=dtmp["x"], y=dtmp["y"], npoints=tl, bounds=Ebounds
         )
         dtmp["x"] = x

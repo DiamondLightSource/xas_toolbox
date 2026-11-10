@@ -1,4 +1,6 @@
 from xas_toolbox.fitting.fit_filters import check_energy_overlap, interpolate_fit_data
+from xas_toolbox.fitting.lstsq_fits import nnls_fit
+from xas_toolbox.xas.corrections import pre_edge
 from xas_toolbox.xas.data_generation import make_fake_spectrum
 
 
@@ -109,5 +111,50 @@ class TestFilters:
             assert len(ci["x"]) == len(ci["y"]) <= min(npoints)
 
 
-tmp = TestFilters()
-tmp.test_interp_spectrum()
+def test_nnls_1d_spectrum():
+    formulae = ["MoS2", "Mo", "MoO3", "CaMoO4"]
+    ref_data = []
+    for f in formulae:
+        tmp = make_fake_spectrum(f, "Mo", "k", nscans=1)
+        norm, flat, step = pre_edge(tmp.energy, tmp.mu)
+        ref_data.append((tmp.energy, flat))
+
+    for i in range(len(formulae)):
+        data = ref_data[i]
+        solution, concentrations = nnls_fit(
+            data=data, components=ref_data, component_names=formulae, filter=False
+        )
+        assert len(concentrations) == len(formulae)
+        assert list(solution.keys()) == ["fit data", "fitted values", "fitted data"]
+        assert round(concentrations[i], 2) > 0.99
+
+        solution, concentrations = nnls_fit(
+            data=data, components=ref_data, component_names=formulae, filter=True
+        )
+        assert len(concentrations) <= len(formulae)
+        assert list(solution.keys()) == ["fit data", "fitted values", "fitted data"]
+
+
+def test_nnls_nd():
+    formulae = ["Cr", "Cr2Na2O7", "YCrO3"]
+    ref_data = []
+    for f in formulae:
+        tmp = make_fake_spectrum(f, "Cr", "k", nscans=1)
+        norm, flat, step = pre_edge(tmp.energy, tmp.mu)
+        ref_data.append((tmp.energy, flat))
+
+    for i in range(len(formulae)):
+        data = make_fake_spectrum(formulae[i], "Cr", "K", nscans=30)
+        norm, flat, step = pre_edge(data.energy, data.mu)
+        data = (data.energy, norm)
+        solution, concentrations = nnls_fit(
+            data=data, components=ref_data, component_names=formulae, filter=False
+        )
+        assert concentrations.shape[1] == len(formulae)
+        assert concentrations.shape[0] == norm.shape[0]
+
+        solution, concentrations = nnls_fit(
+            data=data, components=ref_data, component_names=formulae, filter=True
+        )
+        assert concentrations.shape[1] <= len(formulae)
+        assert concentrations.shape[0] == norm.shape[0]
