@@ -31,8 +31,9 @@ def calc_overlap_score(
 
 
 def check_energy_overlap(
-    data: XasMeasurement, components: list[XasMeasurement] | None
-) -> tuple[XasMeasurement, list[XasMeasurement] | None]:
+    data: XasMeasurement | tuple[_Array1dFloat, _ArrayNdFloat],
+    components: list[XasMeasurement | tuple[_Array1dFloat, _Array1dFloat]] | None,
+):
     """
     Filter a set of data and components to find a common energy range.
     Data that has less than 30% similarity with the data's energy range will be
@@ -47,14 +48,22 @@ def check_energy_overlap(
             data: Same data from arguments.
             components_out: list of filtered components.
     """
-
-    espace_data = np.linspace(data.energy[0], data.energy[-1], 10)
+    if isinstance(data, tuple):
+        x = data[0]
+    else:
+        x = data.energy
+    espace_data = np.linspace(x[0], x[-1], 10)
     espace_data = np.array([round(n, -2) for n in espace_data])
 
     if components is not None:
-        flagged_components: list[int] = []
+        flagged_components = []
         for i in range(len(components)):
-            espace = np.linspace(components[i].energy[0], components[i].energy[-1], 10)
+            tmp = components[i]
+            if isinstance(tmp, tuple):
+                x = tmp[0]
+            else:
+                x = tmp.energy
+            espace = np.linspace(x[0], x[-1], 10)
             espace = np.array([round(n, 2) for n in espace])
             score = calc_overlap_score(espace_data, espace)
             if score < 0.3:
