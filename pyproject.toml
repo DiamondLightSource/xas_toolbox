@@ -59,7 +59,7 @@ version_file = "src/xas_toolbox/_version.py"
 ignore_missing_imports = true # Ignore missing stubs in imported modules
 implicit_optional = true
 local_partial_types = true
-allow_redefinition_new = true # allow reassigning variables to different types.
+allow_redefinition = true # allow reassigning variables to different types.
 
 [tool.pytest.ini_options]
 # Run pytest with all our checkers, and don't spam us with massive tracebacks on error
@@ -107,7 +107,7 @@ commands = [
     [
         "mypy",
         "src",
-        # "tests", # ignore test tyoe-checking.
+        # "tests", # ignore test type-checking.
         { replace = "posargs", default = [
         ], extend = true },
     ],
