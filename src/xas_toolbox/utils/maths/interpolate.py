@@ -43,7 +43,7 @@ def interpolate_with_bounds(
     x: np.ndarray,
     y: np.ndarray,
     npoints: int,
-    bounds: tuple[int, int],
+    bounds: tuple[int | float, int | float],
     method: str = "Pchip",
 ):
     x, y = _remove_negative_gradient(x, y)

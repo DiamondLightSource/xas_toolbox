@@ -20,4 +20,9 @@ _ArrayNd = _ArrayNdFloat | _ArrayNdInt | _ArrayNdComplex
 
 class _XYdict(TypedDict):
     x: _Array1d
-    y: _ArrayNd
+    y: _ArrayNd | _Array1d
+
+
+class _XYdictFloat(TypedDict):
+    x: _Array1dFloat
+    y: _ArrayNdFloat | _Array1dFloat
