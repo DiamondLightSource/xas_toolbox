@@ -4,7 +4,7 @@ import numpy as np
 
 from xas_toolbox.io import XasMeasurement
 from xas_toolbox.utils.maths.interpolate import interpolate_data
-from xas_toolbox.utils.typing import _Array1dFloat, _ArrayNdFloat
+from xas_toolbox.utils.typehints import _Array1dFloat, _ArrayNdFloat
 
 logger = logging.getLogger(__name__)
 
