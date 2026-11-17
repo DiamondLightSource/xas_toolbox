@@ -224,10 +224,13 @@ def norm_and_flatten(
             ynorm = ynorm.T
 
         if flatten is True:
+            ie0 = np.array(ie0).flatten()
             yflat = ynorm - resid.T
             for i in range(y.shape[0]):
-                yflat[i, :] += resid[np.array(ie0)[i], i]
-                yflat[i, : np.array(ie0)[i]] = ynorm[i, : np.array(ie0)[i]]
+                yflat[i, :] += resid[np.array(ie0, dtype=int)[i], i]
+                yflat[i, : np.array(ie0, dtype=int)[i]] = ynorm[
+                    i, : np.array(ie0, dtype=int)[i]
+                ]
 
             if yflat.shape != y.shape:
                 yflat = yflat.T

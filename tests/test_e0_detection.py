@@ -163,3 +163,14 @@ def test_detect_decreasing_edge_height():
         e0, en, ec = calc_e0(spectrum.energy, ytmp)
         ytmp *= 0.5
         assert ec == 1
+
+
+def test_e0_stack():
+    data = make_fake_spectrum("FeO2", "Fe", "K", nscans=1000)
+    e0, ec, eno = calc_e0(data.energy, data.mu)
+    assert isinstance(e0, list)
+    assert len(e0) == data.mu.shape[0]
+    assert isinstance(ec, list)
+    assert len(ec) == data.mu.shape[0]
+    assert isinstance(eno, list)
+    assert len(eno) == data.mu.shape[0]
