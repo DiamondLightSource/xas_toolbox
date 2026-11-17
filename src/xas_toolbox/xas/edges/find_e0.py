@@ -46,7 +46,7 @@ def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
         if len(edge_coords) > 1:
             edge_coords = _filter_edge_coords(edge_coords, x, post)
         edge_energy = [x[e] for e in edge_coords]
-        edge_number = len(edge_coords)
+        edge_number: int | list[int] = len(edge_coords)
     else:
         edge_coords = []
         for i in range(y.shape[0]):
