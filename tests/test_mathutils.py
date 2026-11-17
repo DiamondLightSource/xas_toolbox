@@ -1,6 +1,7 @@
 import numpy as np
 
 from xas_toolbox.io import XasMeasurement
+from xas_toolbox.utils.maths.crop import crop_xy
 from xas_toolbox.utils.maths.filter import normalise_matrix, resize_with_replacement
 from xas_toolbox.utils.maths.interpolate import interpolate_with_bounds
 from xas_toolbox.utils.maths.start_stop import _get_start_stop, _mean_start_stop
@@ -90,3 +91,23 @@ def test_normalise_matrix():
     sums = np.sum(c_2, axis=-1)
     for s in sums:
         assert round(s, 0) == 1
+
+
+def test_crop_xy():
+    x = np.arange(1, 300, 0.5)
+    y = np.random.default_rng(10).normal(0.5, 0.5, len(x))
+    xc, yc = crop_xy(x, y, bounds=(0, len(x)), mode="index")
+    assert len(xc) == len(yc) == len(x) == len(y)
+
+    xc, yc = crop_xy(x, y, bounds=(10, 40), mode="value")
+    assert len(xc) == len(yc)
+    assert np.max(xc) <= 40
+    assert np.min(xc) >= 10
+
+    x = np.arange(1, 100, 1)
+    y = np.random.default_rng(10).poisson(0.3, (30, len(x)))
+    xc, yc = crop_xy(x, y, (90, 100))
+    assert len(xc) == yc.shape[1]
+
+    xc, yc = crop_xy(x, y, (1, 10), mode="value")
+    assert len(xc) == yc.shape[1]

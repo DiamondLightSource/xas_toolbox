@@ -7,7 +7,7 @@ from xraydb import guess_edge
 from xraylib import EdgeEnergy, SymbolToAtomicNumber
 
 from xas_toolbox.utils.maths.start_stop import _mean_start_stop
-from xas_toolbox.utils.typing import _Array1dFloat, _ArrayNdFloat
+from xas_toolbox.utils.typehints import _Array1dFloat, _ArrayNdFloat
 from xas_toolbox.utils.xray import _edges
 
 logger = logging.getLogger(__name__)
