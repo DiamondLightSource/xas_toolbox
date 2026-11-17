@@ -4,6 +4,7 @@ import numpy as np
 
 from xas_toolbox.io import XasMeasurement
 from xas_toolbox.utils.maths.interpolate import interpolate_data
+from xas_toolbox.utils.typing import _Array1dFloat, _ArrayNdFloat
 
 logger = logging.getLogger(__name__)
 
@@ -105,3 +106,19 @@ def align_stack(scan: XasMeasurement):
     scan_out.energy = energy_out
     scan_out.mu = mu_out
     return scan_out
+
+
+def shift_to_iref(
+    x: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat], delta_e: float | np.ndarray
+) -> _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat]:
+    """
+    Shift `x` array/list of arrays by `delta_e` values.
+    """
+    if isinstance(x, np.ndarray):
+        out: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat] = np.empty_like(x)
+        out = x + delta_e
+    else:
+        out = []
+        for i in range(len(x)):
+            out.append(x[i] + delta_e[i])  # type: ignore
+    return out

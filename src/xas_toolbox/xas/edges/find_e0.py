@@ -8,6 +8,7 @@ from xraydb import guess_edge
 from xraylib import EdgeEnergy, SymbolToAtomicNumber
 
 from xas_toolbox.utils.maths.start_stop import _mean_start_stop
+from xas_toolbox.utils.typing import _Array1dFloat, _ArrayNdFloat
 from xas_toolbox.utils.xray import _edges
 
 logger = logging.getLogger(__name__)
@@ -58,7 +59,80 @@ def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
     return edge_energy, np.array(edge_coords, dtype=int), edge_number
 
 
-def edge_from_symbol(x: np.ndarray, y: np.ndarray, symbol: str) -> str:
+def get_edge_symbol(
+    x: _ArrayNdFloat | _Array1dFloat | list[_Array1dFloat],
+    y: _Array1dFloat | _ArrayNdFloat,
+    symbol: str | None = None,
+):
+    """
+    Get absorption edge and atom labels for x, y data with optional absorbing atom
+    input.
+
+    Arguments:
+        x: Energy array/list
+        y: Absorption array/list
+        symbol (Optional): Absorbing atom.
+
+    Returns:
+        out: List/single value for predicted absorption edge + absorbing atom
+        (if symbol=`None`).
+    """
+    if symbol is not None:
+        out = edge_from_symbol(x, y, symbol)
+    else:
+        if isinstance(x, np.ndarray) and x.ndim == 1:
+            e0, _, _ = calc_e0(x, y)
+            if isinstance(e0, list):
+                out = guess_edge(e0[0])
+            else:
+                out = guess_edge(e0)
+        else:
+            out = []
+            if isinstance(x, np.ndarray):
+                for i in range(x.shape[0]):
+                    e0, idx, no = calc_e0(x[i, :], y[i, :])
+                    if isinstance(e0, list):
+                        out.append(guess_edge(e0[0]))
+                    else:
+                        out.append(guess_edge(e0))
+            if isinstance(x, list):
+                for i in range(len(x)):
+                    e0, idx, no = calc_e0(x[i], y[i])
+                    if isinstance(e0, list):
+                        out.append(guess_edge(e0[0]))
+                    else:
+                        out.append(guess_edge(e0))
+    return out
+
+
+def edge_from_symbol(
+    x: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat],
+    y: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat],
+    symbol: str,
+) -> str | list[str]:
+    if isinstance(x, np.ndarray):
+        if x.ndim > 1:
+            edge = []
+            for i in range(x.shape[0]):
+                tmp = edge_from_symbol_1d(x[i, :], y[i, :], symbol=symbol)  # type:ignore
+                edge.append(tmp)
+        else:
+            edge = edge_from_symbol_1d(x, np.array(y), symbol)
+    else:
+        edge = []
+        for i in range(len(x)):
+            tmp = edge_from_symbol_1d(x[i], y[i], symbol=symbol)
+            edge.append(tmp)
+
+    edge = list(set(edge))
+    if len(edge) == 1:
+        edge = edge[0]
+    return edge
+
+
+def edge_from_symbol_1d(
+    x: _Array1dFloat, y: _Array1dFloat | _ArrayNdFloat, symbol: str
+) -> str:
     """
     Get absorption edge label for a sample with unkown edge but
     known absorbing atom.
@@ -73,14 +147,21 @@ def edge_from_symbol(x: np.ndarray, y: np.ndarray, symbol: str) -> str:
     """
     Z = SymbolToAtomicNumber(symbol)  # noqa: N806
     e0, ec, eno = calc_e0(x, y)
-    e0s = np.array([EdgeEnergy(Z, e.upper()) for e in _edges])
-    diffs = np.abs(e0s - e0)
+    e0s = np.array([EdgeEnergy(Z, i) for i in range(5)])
+    if isinstance(e0, float):
+        diffs = np.abs(e0s - e0)
+    else:
+        diffs = np.abs(e0s - e0[0])
+
     edge = _edges[np.where(diffs == diffs.min())[0][0]]
     return edge
 
 
 def compare_e0s(
-    x: np.ndarray, y: np.ndarray, symbol: str | None = None, edge: str | None = None
+    x: _Array1dFloat,
+    y: _Array1dFloat | _ArrayNdFloat,
+    symbol: str | None = None,
+    edge: str | None = None,
 ):
     """
     Get a tabulated e0 value from either sample metadata for absorbing atom + edge
@@ -98,12 +179,15 @@ def compare_e0s(
             e0_calc (float): Calcuated e0 from `x` and `y`.
     """
     e0_calc, idx, no = calc_e0(x, y)
-    e0_calc = e0_calc[0]
+    if isinstance(e0_calc, list):
+        e0_calc = e0_calc[0]
     if edge is None:
         if symbol is None:
             symbol, edge = guess_edge(e0_calc)
         else:
             edge = edge_from_symbol(x, y, symbol)
+    if isinstance(edge, list):
+        edge = edge[0]
     # compare with xraydb value:
     # e0_pred = xray_edge(symbol, edge, energy_only=True)
     e0_pred = EdgeEnergy(SymbolToAtomicNumber(symbol), _edges.index(edge.upper())) * 1e3

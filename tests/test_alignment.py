@@ -2,6 +2,7 @@ import numpy as np
 
 from xas_toolbox.io import XasMeasurement
 from xas_toolbox.xas.alignment import align_scan, align_stack
+from xas_toolbox.xas.alignment.align_stack import shift_to_iref
 from xas_toolbox.xas.data_generation import make_fake_spectrum, mix_scans
 
 
@@ -39,3 +40,15 @@ class TestAlignScans:
 
         assert stacked.energy.shape[0] == len(as_data_1.energy)
         assert aligned.energy.ndim == 1
+
+    def test_iref_shift(self):
+        data = make_fake_spectrum("AsO2", "As", "K", nscans=1)
+        x = shift_to_iref(data.energy, delta_e=0.1)
+        assert len(x) == len(data.energy)
+        assert isinstance(x, np.ndarray)
+        assert x.ndim == 1
+
+        data = make_fake_spectrum("FeSO3", "Fe", "K", nscans=1)
+        energy = [data.energy] * 100
+        x = shift_to_iref(energy, np.random.default_rng(12).choice(10, 100))
+        assert isinstance(x, list)
