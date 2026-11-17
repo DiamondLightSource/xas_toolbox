@@ -115,10 +115,10 @@ def shift_to_iref(
     Shift `x` array/list of arrays by `delta_e` values.
     """
     if isinstance(x, np.ndarray):
-        out = np.empty_like(x)
+        out: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat] = np.empty_like(x)
         out = x + delta_e
     else:
         out = []
         for i in range(len(x)):
-            out.append(x[i] + delta_e[i])
+            out.append(x[i] + delta_e[i])  # type: ignore
     return out

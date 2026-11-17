@@ -88,12 +88,20 @@ def get_edge_symbol(
                 out = guess_edge(e0)
         else:
             out = []
-            for i in range(x.shape[0]):
-                e0, idx, no = calc_e0(x[i, :], y[i, :])
-                if isinstance(e0, list):
-                    out.append(guess_edge(e0[0]))
-                else:
-                    out.append(guess_edge(e0))
+            if isinstance(x, np.ndarray):
+                for i in range(x.shape[0]):
+                    e0, idx, no = calc_e0(x[i, :], y[i, :])
+                    if isinstance(e0, list):
+                        out.append(guess_edge(e0[0]))
+                    else:
+                        out.append(guess_edge(e0))
+            if isinstance(x, list):
+                for i in range(len(x)):
+                    e0, idx, no = calc_e0(x[i], y[i])
+                    if isinstance(e0, list):
+                        out.append(guess_edge(e0[0]))
+                    else:
+                        out.append(guess_edge(e0))
     return out
 
 
@@ -102,14 +110,23 @@ def edge_from_symbol(
     y: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat],
     symbol: str,
 ) -> str | list[str]:
-    if x.ndim > 1:
-        for i in range(x.shape[0]):
-            edge = edge_from_symbol(x[i, :], y[i, :], symbol=symbol)
+    if isinstance(x, np.ndarray):
+        if x.ndim > 1:
+            edge = []
+            for i in range(x.shape[0]):
+                tmp = edge_from_symbol_1d(x[i, :], y[i, :], symbol=symbol)  # type:ignore
+                edge.append(tmp)
+        else:
+            edge = edge_from_symbol_1d(x, np.array(y), symbol)
     else:
-        edge = edge_from_symbol(x, y, symbol)
-        edge = list(set(edge))
-        if len(edge) == 1:
-            edge = edge[0]
+        edge = []
+        for i in range(len(x)):
+            tmp = edge_from_symbol_1d(x[i], y[i], symbol=symbol)
+            edge.append(tmp)
+
+    edge = list(set(edge))
+    if len(edge) == 1:
+        edge = edge[0]
     return edge
 
 
@@ -169,6 +186,8 @@ def compare_e0s(
             symbol, edge = guess_edge(e0_calc)
         else:
             edge = edge_from_symbol(x, y, symbol)
+    if isinstance(edge, list):
+        edge = edge[0]
     # compare with xraydb value:
     # e0_pred = xray_edge(symbol, edge, energy_only=True)
     e0_pred = EdgeEnergy(SymbolToAtomicNumber(symbol), _edges.index(edge.upper())) * 1e3
