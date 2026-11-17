@@ -62,7 +62,7 @@ def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
 def get_edge_symbol(
     x: _ArrayNdFloat | _Array1dFloat | list[_Array1dFloat],
     y: _Array1dFloat | _ArrayNdFloat,
-    symbol: str | None,
+    symbol: str | None = None,
 ):
     """
     Get absorption edge and atom labels for x, y data with optional absorbing atom
@@ -147,7 +147,7 @@ def edge_from_symbol_1d(
     """
     Z = SymbolToAtomicNumber(symbol)  # noqa: N806
     e0, ec, eno = calc_e0(x, y)
-    e0s = np.array([EdgeEnergy(Z, e.upper()) for e in _edges[5:]])
+    e0s = np.array([EdgeEnergy(Z, i) for i in range(5)])
     if isinstance(e0, float):
         diffs = np.abs(e0s - e0)
     else:
