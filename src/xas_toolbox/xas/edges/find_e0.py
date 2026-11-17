@@ -48,20 +48,23 @@ def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
         edge_energy = [x[e] for e in edge_coords]
         edge_number = len(edge_coords)
     else:
-        edge_coords = [np.where(yf[i, :] == 1)[0] for i in range(y.shape[0])]
-
         edge_coords = []
         for i in range(y.shape[0]):
             tmp = np.where(yf[i, :] == 1)[0]
-            ec = _filter_edge_coords(
-                coords=tmp,
-                energy=x,
-                min_spacing=post,
-            )
+            ec = _filter_edge_coords(coords=tmp, energy=x, min_spacing=post)
             edge_coords.append(ec)
 
-        edge_energy = [x[e] for i in range(y.shape[0]) for e in edge_coords[i]]
-        edge_number = [len(e) for e in edge_coords]
+        edge_energy = []
+        edge_number = []
+
+        for i in range(len(edge_coords)):
+            edge_number.append(len(edge_coords[i]))
+            if len(edge_coords[i]) > 1:
+                for e in edge_coords[i]:
+                    edge_energy.append(x[e])
+            else:
+                edge_energy.append(x[edge_coords[i]])
+        edge_energy = list(np.array(edge_energy).flatten())
 
     return edge_energy, edge_coords, edge_number
 
