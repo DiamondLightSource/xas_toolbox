@@ -116,7 +116,12 @@ def shift_to_iref(
     """
     if isinstance(x, np.ndarray):
         out: _Array1dFloat | _ArrayNdFloat | list[_Array1dFloat] = np.empty_like(x)
-        out = x + delta_e
+        if x.ndim == 1:
+            out = x + delta_e
+        else:
+            out = np.empty_like(x)
+            for m in range(x.shape[0]):
+                out[m,:] = x[m,:] + delta_e[m]
     else:
         out = []
         for i in range(len(x)):
