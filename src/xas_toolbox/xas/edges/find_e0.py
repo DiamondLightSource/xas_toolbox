@@ -1,5 +1,4 @@
 import logging
-from functools import partial
 
 import numpy as np
 from larch.math import remove_nans2
@@ -50,13 +49,21 @@ def calc_e0(x: np.ndarray, y: np.ndarray, sigma: float = 5):
         edge_number = len(edge_coords)
     else:
         edge_coords = [np.where(yf[i, :] == 1)[0] for i in range(y.shape[0])]
-        edge_coords = np.apply_along_axis(
-            partial(_filter_edge_coords, energy=x, min_spacing=post), 1, edge_coords
-        )
+
+        edge_coords = []
+        for i in range(y.shape[0]):
+            tmp = np.where(yf[i, :] == 1)[0]
+            ec = _filter_edge_coords(
+                coords=tmp,
+                energy=x,
+                min_spacing=post,
+            )
+            edge_coords.append(ec)
+
         edge_energy = [x[e] for i in range(y.shape[0]) for e in edge_coords[i]]
         edge_number = [len(e) for e in edge_coords]
 
-    return edge_energy, np.array(edge_coords, dtype=int), edge_number
+    return edge_energy, edge_coords, edge_number
 
 
 def get_edge_symbol(
